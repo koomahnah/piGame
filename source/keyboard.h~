@@ -1,0 +1,12 @@
+#define IRQ_ENABLE2     0x2000B214
+
+extern void irqEnable();
+extern void irqDisable();
+void keyboardInit();
+void kIrqHandler();
+
+volatile unsigned int kBuffer=16;
+short int pinToGpio[9]= { 16, 22, 23, 4, 14, 15, 17, 18, 27 };
+
+void keyboardInit(){
+	int x;

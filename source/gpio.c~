@@ -1,0 +1,56 @@
+#include "gpio.h"
+volatile unsigned int* gpioBase = (unsigned int*) GPIO_BASE_ADDRESS;
+volatile unsigned int* gpset0 = (unsigned int*) GPSET0;
+volatile unsigned int* gpclear0 = (unsigned int*) GPCLEAR0;
+volatile unsigned int* gppud = (unsigned int*) GPPUD;
+volatile unsigned int* gpren0 = (unsigned int*) GPREN0;
+volatile unsigned int* gplev0 = (unsigned int*) GPLEV0;
+
+void setGpioFunct(int pinNumber, int function){
+//	if(pinNumber>53) return;
+	unsigned int tmp = *(gpioBase+(pinNumber/10));
+	tmp &= ~(7<<((pinNumber%10)*3));
+	tmp |= (function<<((pinNumber%10)*3));
+	*(gpioBase+(pinNumber/10))=tmp;
+}
+
+void setPin(int pinNumber){
+	*(gpset0+(pinNumber/32))=(1<<(pinNumber%32));
+}
+
+void clearPin(int pinNumber){
+        *(gpclear0+(pinNumber/32))=(1<<(pinNumber%32));
+}
+
+void setPull(int pinNumber, int pull){
+	*gppud=(pull&0x3);
+	/*  in case pull is more than 2 */
+	waitCycles(150);
+	*(gppud+1+(pinNumber/32))=(1<<(pinNumber%32));
+	/* worth to say that it is possible to clock
+	   many lines at once				*/
+	waitCycles(150);
+	*gppud=0; *(gppud+1)=0; *(gppud+2)=0;
+	/* maybe it is necessary, maybe it is not */
+}
+
+/*	enable is bool value,
+	as for detect mode use: RISE, FALL, HIGH, LOW, ARISE, AFALL
+*/
+void setDetect(int pinNumber, short int enable, short int mode){
+//	*(gpren0+(mode*3)+(pinNumber/32))=(enable<<(pinNumber%32));
+	unsigned int tmp = *(gpren0+(mode*3)+(pinNumber/32));
+	tmp |= enable<<(pinNumber%32);
+	*(gpren0+(mode*3)+(pinNumber/32))=tmp;
+}
+
+int getPinLevel(int pinNumber){
+	return (((*(gplev0+(pinNumber/32)))>>pinNumber%32)&1);
+}
+/*	I'm sure all of that could be inlined, worth trying	*/
+
+void flash(void){
+	setGpioFunct(16, OUTPUT);
+	clearPin(16); wait(1000000); setPin(16); wait(1000000);
+}
+
