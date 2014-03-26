@@ -10,8 +10,8 @@ void entry(){
 	keyboardInit();
 	timerInit();
 	lcdDisplayON();
-//	greenAndRed();
-	snake();
+	greenAndRed();
+//	snake();
 	return;
 }
 
