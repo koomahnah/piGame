@@ -3,7 +3,6 @@
 #include "lcd.h"
 #include "green_n_red.h"
 #include "keyboard.h"
-#include "gpio.h"
 
 struct object brick = { 0, 0, 16, 16, 10, 56, 19 };
 struct object flier = { 0, 0, 100, 10, 62, 10, 10 };

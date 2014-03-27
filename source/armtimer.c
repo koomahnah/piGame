@@ -1,7 +1,6 @@
 #include "armtimer.h"
 #include "gpio.h"
 #include "object.h"
-#include "lcd.h"
 
 volatile unsigned int *timercs = (unsigned int *)TIMERCS;
 volatile unsigned int *irqEnable1 = (unsigned int *)IRQENABLE1;

@@ -1,6 +1,5 @@
 #include "gpio.h"
 #include "keyboard.h"
-#include "lcd.h"
 #include "object.h"
 
 volatile unsigned int kBuffer = 16;

@@ -1,13 +1,6 @@
 #include "lcd.h"
-#include "gpio.h"
-#include "armtimer.h"
-#include "keyboard.h"
 
-volatile unsigned int *spiControl = (unsigned int *)SPI_BASE_ADDRESS;
-volatile unsigned int *spiFIFO = (unsigned int *)SPI_BASE_ADDRESS + 1;
-volatile unsigned int *spiClock = (unsigned int *)SPI_BASE_ADDRESS + 2;
 volatile int irqTrace;
-volatile int irqLock;
 struct colour background = { 0, 0, 0 };
 struct colour font = { 0b111111, 0b111111, 0b111111 };
 
@@ -232,19 +225,4 @@ void lcdFillWindow(unsigned short int hsa, unsigned short int hea, unsigned shor
 }
 
 /*	secondary IRQ disable (not in CPSR)	*/
-void irqDisableSec(void){
-	if(irqLock == 0){
-		*(irqEnable2+3) = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
-		*(irqEnable1+3) = 2;
-	}
-	irqLock++;
-}
-
-void irqEnableSec(void){
-	irqLock--;
-	if(irqLock == 0){
-		*irqEnable2 = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
-		*irqEnable1 = 2;
-	}
-}
 

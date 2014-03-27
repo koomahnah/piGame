@@ -1,5 +1,4 @@
 #include "lcd.h"
-#include "gpio.h"
 #include "keyboard.h"
 #include "object.h"
 #include "armtimer.h"
