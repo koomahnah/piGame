@@ -1,10 +1,3 @@
-Hello World!
-==========
-Hello World sub.
+Simple game for RPi
 ---------
-
-Lista:
-- raz
-- dwa
-
-	A to jest nie wim co.
+Check [http://cumana.jogger.pl/2014/03/26/simple-game-on-bare-metal-raspberry-pi/](here) for readable introduction.
