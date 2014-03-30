@@ -6,14 +6,10 @@ struct colour font = { 0b111111, 0b111111, 0b111111 };
 
 void lcdInit(int clock)
 {
-	unsigned int tmp;
 	intrTrace = 0;
+	spiInit(1, 1, clock);
 	lcdExtEntryFunct = dummy;
 	lcdExtExitFunct = dummy;
-	setGpioFunct(8, ALT0);
-	setGpioFunct(9, ALT0);
-	setGpioFunct(10, ALT0);
-	setGpioFunct(11, ALT0);
 	setGpioFunct(25, OUTPUT);
 
 	setPin(25);
@@ -22,31 +18,21 @@ void lcdInit(int clock)
 	wait(1500);
 	setPin(25);
 
-	spiClearFIFO();
-/*	tmp = *spiControl;			// clear FIFO
-	tmp |= (1<<SPI_C_CLEAR_RX | 1<<SPI_C_CLEAR_TX);
-        *spiControl=tmp;
-*/
-	tmp = 0;
-	tmp |= (1 << SPI_C_CPOL | 1 << SPI_C_CPHA);
-	*spiControl = tmp;
-
-	*spiClock = clock;
 	wait(200000);
 
 	lcdRegWrite(0x00, 0x0000);
-	lcdRegWrite(0x01, 0x0);	/* Driver Output Contral */
-	lcdRegWrite(0x02, (1 << 10));	/* LCD Driver Waveform Contral */
+	lcdRegWrite(0x01, 0x0);	/* Driver Output control */
+	lcdRegWrite(0x02, (1 << 10));	/* LCD Driver Waveform control */
 	lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 5) | (1 << 12) | (1 << 4) | (1 << 3));	/* Set the scan moe */
-	lcdRegWrite(0x04, 0x0000);	/* Scalling Contral */
-	lcdRegWrite(0x08, 0x0202);	/* Display Contral 2 */
-	lcdRegWrite(0x09, 0x0000);	/* Display Contral 3 */
-	lcdRegWrite(0x0a, 0x0000);	/* Frame Cycle Contal */
-	lcdRegWrite(0x0c, (1 << 1) | (1 << 0));	/* Extern Display Interface Contral 1 */
+	lcdRegWrite(0x04, 0x0000);	/* Scalling control */
+	lcdRegWrite(0x08, 0x0202);	/* Display control 2 */
+	lcdRegWrite(0x09, 0x0000);	/* Display control 3 */
+	lcdRegWrite(0x0a, 0x0000);	/* Frame Cycle Control */
+	lcdRegWrite(0x0c, (1 << 1) | (1 << 0));	/* Extern Display Interface control 1 */
 	lcdRegWrite(0x0d, 0x0000);	/* Frame Maker Position */
-	lcdRegWrite(0x0f, 0x0000);	/* Extern Display Interface Contral 2 */
+	lcdRegWrite(0x0f, 0x0000);	/* Extern Display Interface control 2 */
 	wait(50000);
-	lcdRegWrite(0x07, 0x0101);	/* Display Contral */
+	lcdRegWrite(0x07, 0x0101);	/* Display control */
 	wait(50000);
 	lcdRegWrite(0x10, (1 << 12) | (0 << 8) | (1 << 7) | (1 << 6) | (0 << 4));	/* Power Control 1 */
 	lcdRegWrite(0x11, 0x0007);	/* Power Control 2 */
@@ -63,7 +49,7 @@ void lcdInit(int clock)
 
 	lcdRegWrite(0x60, 0x2700);	/* Driver Output Control */
 	lcdRegWrite(0x61, 0x0001);	/* Driver Output Control */
-	lcdRegWrite(0x6a, 0x0000);	/* Vertical Srcoll Control */
+	lcdRegWrite(0x6a, 0x0000);	/* Vertical Scroll Control */
 
 	lcdRegWrite(0x80, 0x0000);	/* Display Position? Partial Display 1 */
 	lcdRegWrite(0x81, 0x0000);	/* RAM Address Start? Partial Display 1 */
@@ -72,12 +58,12 @@ void lcdInit(int clock)
 	lcdRegWrite(0x84, 0x0000);	/* RAM Address Start? Partial Display 2 */
 	lcdRegWrite(0x85, 0x0000);	/* RAM Address End? Partial Display 2 */
 
-	lcdRegWrite(0x90, (0 << 7) | (16 << 0));	/* Frame Cycle Contral */
-	lcdRegWrite(0x92, 0x0000);	/* Panel Interface Contral 2 */
-	lcdRegWrite(0x93, 0x0001);	/* Panel Interface Contral 3 */
-	lcdRegWrite(0x95, 0x0110);	/* Frame Cycle Contral */
+	lcdRegWrite(0x90, (0 << 7) | (16 << 0));	/* Frame Cycle control */
+	lcdRegWrite(0x92, 0x0000);	/* Panel Interface control 2 */
+	lcdRegWrite(0x93, 0x0001);	/* Panel Interface control 3 */
+	lcdRegWrite(0x95, 0x0110);	/* Frame Cycle control */
 	lcdRegWrite(0x97, (0 << 8));
-	lcdRegWrite(0x98, 0x0000);	/* Frame Cycle Contral */
+	lcdRegWrite(0x98, 0x0000);	/* Frame Cycle control */
 	lcdRegWrite(0x07, 0b100110001);
 	wait(500000);
 }
