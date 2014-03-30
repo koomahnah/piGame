@@ -2,9 +2,13 @@
 #include "keyboard.h"
 #include "object.h"
 #include "armtimer.h"
+#include "irq.h"
 
 void intToStr(int a, char *str);
 void entry(){
+	irqLock = 0;
+	lcdExtEntryFunct = irqDisableSec;
+	lcdExtExitFunct = irqEnableSec;
 	lcdInit(32);
 	keyboardInit();
 	timerInit();

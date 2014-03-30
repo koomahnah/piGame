@@ -3,16 +3,17 @@
 #include "object.h"
 
 volatile unsigned int kBuffer = 16;
+volatile unsigned int kLock = 0;
 short int pinToGpio[9] = { 12, 22, 23, 24, 14, 15, 17, 18, 27 };
 
 /* pin 24 was pin 4 primarily here, but it has pull up instead of down	*/
-volatile unsigned int *irqEnable2 = (unsigned int *)IRQ_ENABLE2;
 char keyboardArray[16] = { '1', '2', '3', 'A', '4', '5', '6', 'B', '7', '8', '9', 'C', 42, '0', 35, 'D' };
 
 void (*extKIrqHandler)(void) = 0;
 void keyboardInit()
 {
 	extKIrqHandler = 0;
+	kLock = 0;
 	int x;
 	/*
 	 * set 5-8 lines to input with pull down,
@@ -45,7 +46,8 @@ void keyboardInit()
 
 void kIrqHandler()
 {
-	*(irqEnable2+3) = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
+//	*(irqEnable2+3) = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
+	kLock = 1;
 	unsigned int tmp;
 	int a, x;
 	for (a = 1; a <= 4; a++) {
@@ -84,6 +86,7 @@ void kIrqHandler()
 	}
 
 	if(extKIrqHandler!=0) extKIrqHandler();
-	*irqEnable2 = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
+//	*irqEnable2 = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
+	kLock = 0;
 	return;
 }

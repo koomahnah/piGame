@@ -1,11 +1,11 @@
 #include "armtimer.h"
 #include "gpio.h"
 #include "object.h"
+#include "irq.h"
 
 volatile unsigned int *timercs = (unsigned int *)TIMERCS;
-volatile unsigned int *irqEnable1 = (unsigned int *)IRQENABLE1;
 void (*extTIrqHandler)(void) = 0;
-unsigned int timerMatch;
+static unsigned int timerMatch;
 void timerInit()
 {
 	*irqEnable1=2;

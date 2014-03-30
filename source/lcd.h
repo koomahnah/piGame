@@ -21,7 +21,17 @@ struct colour{
 extern struct colour background;
 extern struct colour font;
 
-extern volatile int irqTrace;
+void (*lcdExtEntryFunct)(void);
+void (*lcdExtExitFunct)(void);
+/*
+	These will be called
+	on entry or exit of critical segments
+	of code.
+*/
+extern volatile int intrTrace;
+/*	If it gets set to 1 while some functions
+	work, all procedure will be repeated.
+*/
 
 extern unsigned char Sinclair_Inverted_M[3044];
 
@@ -33,6 +43,7 @@ void lcdOpenGRAM(void);
 void lcdCloseGRAM(void);
 void lcdSetWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea);
 void lcdPrint(const char *str, int x, int y);
+void dummy(void);
 static inline void lcdDisplayON(void);
 static inline void lcdSetCursor(unsigned short int, unsigned short int);
 static inline void lcdPixelsWrite(unsigned char red, unsigned char green, unsigned char blue);
@@ -47,8 +58,8 @@ static inline void lcdDisplayON(void){
 
 static inline void lcdSetCursor(unsigned short int x, unsigned short int y){
 	do{
-	irqTrace = 0; lcdRegWrite(0x20, x); lcdRegWrite(0x21, y);
-	} while (irqTrace == 1);
+	intrTrace = 0; lcdRegWrite(0x20, x); lcdRegWrite(0x21, y);
+	} while (intrTrace == 1);
 }
 
 /*	it is inlined because it's always invoked in a loop	*/

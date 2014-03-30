@@ -32,10 +32,6 @@ extern volatile unsigned int* spiControl;
 extern volatile unsigned int* spiFIFO;
 extern volatile unsigned int* spiClock;
 
-extern volatile unsigned int *irqEnable2;
-extern volatile unsigned int *irqEnable1;
-extern volatile int irqLock;
-
 static inline void spiStartTransfer(void);
 static inline void spiWaitTilDone(void);
 static inline void spiStopTransfer(void);
@@ -43,8 +39,6 @@ static inline void spiClearFIFO(void);
 static inline unsigned char spiDataIO(unsigned char);
 static inline void spiDataSend(unsigned char);
 static inline unsigned char spiDataReceive(void);
-void irqDisableSec(void);
-void irqEnableSec(void);
 
 static inline void spiStartTransfer(void){
         unsigned int tmp = *spiControl;

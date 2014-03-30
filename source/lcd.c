@@ -1,14 +1,15 @@
 #include "lcd.h"
 
-volatile int irqTrace;
+volatile int intrTrace;
 struct colour background = { 0, 0, 0 };
 struct colour font = { 0b111111, 0b111111, 0b111111 };
 
 void lcdInit(int clock)
 {
 	unsigned int tmp;
-	irqTrace = 0;
-	irqLock = 0;
+	intrTrace = 0;
+	lcdExtEntryFunct = dummy;
+	lcdExtExitFunct = dummy;
 	setGpioFunct(8, ALT0);
 	setGpioFunct(9, ALT0);
 	setGpioFunct(10, ALT0);
@@ -83,7 +84,7 @@ void lcdInit(int clock)
 
 void lcdRegWrite(unsigned char index, unsigned short int data)
 {
-	irqDisableSec();
+	lcdExtEntryFunct();
 	spiStartTransfer();
 	spiDataIO(INDEX_WRITE);
 	spiDataIO(0);
@@ -103,12 +104,12 @@ void lcdRegWrite(unsigned char index, unsigned short int data)
 	spiDataIO((unsigned char)(data >> 8));
 	spiDataIO((unsigned char)data);
 	spiStopTransfer();
-	irqEnableSec();
+	lcdExtExitFunct();
 }
 
 unsigned short int lcdRegRead(unsigned char index)
 {
-	irqDisableSec();
+	lcdExtEntryFunct();
 	int i;
 	spiStartTransfer();
 	spiDataIO(INDEX_WRITE);
@@ -125,11 +126,11 @@ unsigned short int lcdRegRead(unsigned char index)
 	unsigned short int reg = (unsigned short int)(spiDataReceive() << 8);
 	reg += spiDataReceive();
 	spiClearFIFO();
-	irqEnableSec();
+	lcdExtExitFunct();
 	return reg;
 }
 void lcdOpenGRAM(void){
-	irqDisableSec();
+	lcdExtEntryFunct();
 	spiStartTransfer();
 	spiDataIO(INDEX_WRITE);
 	spiDataIO(0); spiDataIO(0x22);
@@ -140,19 +141,19 @@ void lcdOpenGRAM(void){
 
 void lcdCloseGRAM(){
 	spiStopTransfer();
-	irqEnableSec();
+	lcdExtExitFunct();
 }
 
 void lcdSetWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea){
 	vsa&=0x1ff;
 	vea&=0x1ff;
 	do{
-		irqTrace = 0;
+		intrTrace = 0;
 		lcdRegWrite(0x50, (char)hsa);
 		lcdRegWrite(0x51, (char)hea);
 		lcdRegWrite(0x52, vsa);
 		lcdRegWrite(0x53, vea);
-	} while (irqTrace == 1);
+	} while (intrTrace == 1);
 }
 
 void lcdPrint(const char *str, int x, int y){
@@ -197,7 +198,7 @@ void lcdDrawChar(unsigned short int x, unsigned short int y, char character)
 	 */
 	z *= WIDTH * HEIGHT / 8;
 
-	irqDisableSec();
+	lcdExtEntryFunct();
 	lcdSetWindow(x, x + HEIGHT - 1, y, y + WIDTH - 1);
 	lcdSetCursor(x, y);
 	lcdOpenGRAM();
@@ -212,17 +213,19 @@ void lcdDrawChar(unsigned short int x, unsigned short int y, char character)
 		}
 	}
 	lcdCloseGRAM();
-	irqEnableSec();
+	lcdExtExitFunct();
 }
 
 void lcdFillWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea, unsigned char red, unsigned char green, unsigned char blue){
 	do{
-		irqTrace = 0;
+		intrTrace = 0;
 		lcdSetWindow(hsa, hea, vsa, vea);
 		lcdSetCursor(hsa, vsa);
 		lcdPixelsDraw((hea - hsa + 1) * (vea - vsa + 1), red, green, blue);
-	} while (irqTrace == 1);
+	} while (intrTrace == 1);
 }
 
 /*	secondary IRQ disable (not in CPSR)	*/
-
+void dummy(void){
+	return;
+}

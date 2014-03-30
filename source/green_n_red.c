@@ -35,7 +35,7 @@ void greenAndRed(void){
 			lcdDrawChar(10, 246, (char)(greenCounter+48));
 			lcdSetFontColour(63, 0, 0);
 			lcdDrawChar(10, 294, (char)(redCounter+48));
-		} while(irqTrace == 1);
+		} while(intrTrace == 1);
 		wait(500000);
 		lcdFillWindow(10, 26, 246, 310, BACKGROUND_COLOUR);
 		wait(500000);	
@@ -61,7 +61,7 @@ void gnrTIrqHandler()
 			lcdFillWindow(10, 26, 106, 122, BACKGROUND_COLOUR);
 			lcdSetFontColour(BRICK_COLOUR);
 			if(flier.width >= 11){
-			       	flier.width-=10;
+				flier.width-=10;
 				level++;
 			}
 			lcdDrawChar(10, 106, (char)(level+48));

@@ -1,4 +1,5 @@
 .extern entry
+.extern kLock
 .section .init
 .globl _start
 _start:
@@ -57,7 +58,7 @@ dummy:
 
 irq:
         push {r0-r7, lr}
-	ldr r0, =irqTrace
+	ldr r0, =intrTrace
 	mov r1, $1
 	str r1, [r0]
 	ldr r0, =0x20003000	@ check timer cs register
@@ -72,23 +73,12 @@ keyboard:
 	ldr r0, =0x20200040
 	ldr r1, =0x8068000	@ clear event statuses
 	str r1, [r0]
-	bl kIrqHandler
+	ldr r0, =kLock
+	ldr r0, [r0]
+	cmp r0, $0
+	bleq kIrqHandler
 	pop {r0-r7, lr}
 	subs pc, lr, $4
-.section .text
-.globl irqEnable
-irqEnable:
-	mrs r0, cpsr
-	bic r1, r0, $0b10000000
-	msr cpsr, r1
-	bx lr
-.globl irqDisable
-irqDisable:
-	mrs r0, cpsr
-	mov r2, $0b10000000
-	orr r2, r2, r0
-	msr cpsr, r0
-	bx lr
 /*.globl main
 main:
 mainLoop:
