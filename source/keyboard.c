@@ -14,6 +14,7 @@ void keyboardInit()
 {
 	extKIrqHandler = 0;
 	kLock = 0;
+	kBuffer = 16;
 	int x;
 	/*
 	 * set 5-8 lines to input with pull down,
@@ -47,7 +48,7 @@ void keyboardInit()
 void kIrqHandler()
 {
 //	*(irqEnable2+3) = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
-	kLock = 1;
+//	kLock = 1;
 	unsigned int tmp;
 	int a, x;
 	for (a = 1; a <= 4; a++) {
@@ -87,6 +88,6 @@ void kIrqHandler()
 
 	if(extKIrqHandler!=0) extKIrqHandler();
 //	*irqEnable2 = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
-	kLock = 0;
+//	kLock = 0;
 	return;
 }

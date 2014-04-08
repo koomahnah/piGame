@@ -57,7 +57,7 @@ dummy:
 	b dummy
 
 irq:
-        push {r0-r7, lr}
+        push {r0-r12, lr}
 	ldr r0, =intrTrace
 	mov r1, $1
 	str r1, [r0]
@@ -67,7 +67,7 @@ irq:
 	beq keyboard		@ eq <=> Z==1
 timer:
 	bl tIrqHandler
-	pop {r0-r7, lr}
+	pop {r0-r12, lr}
 	subs pc, lr, $4
 keyboard:
 	ldr r0, =0x20200040
@@ -77,7 +77,7 @@ keyboard:
 	ldr r0, [r0]
 	cmp r0, $0
 	bleq kIrqHandler
-	pop {r0-r7, lr}
+	pop {r0-r12, lr}
 	subs pc, lr, $4
 /*.globl main
 main:

@@ -1,4 +1,4 @@
-#include "armtimer.h"
+#include "timer.h"
 #include "gpio.h"
 #include "object.h"
 #include "irq.h"
@@ -25,11 +25,11 @@ void timerSetMatch(unsigned int value)
 	timerMatch = value;
 }
 void tIrqHandler(void){
-	irqDisableSec();
+//	irqDisableSec();
 	unsigned int tmp = *(timercs+1);
 	tmp+=timerMatch;
 	*(timercs+4)=tmp;
 	*timercs=0b10;
 	if(extTIrqHandler!=0) extTIrqHandler();
-	irqEnableSec();
+//	irqEnableSec();
 }

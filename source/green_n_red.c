@@ -1,4 +1,4 @@
-#include "armtimer.h"
+#include "timer.h"
 #include "object.h"
 #include "lcd.h"
 #include "green_n_red.h"
@@ -14,8 +14,9 @@ static volatile int interval;
 static volatile int level;
 
 void greenAndRed(void){
+	timerInit();
 	greenDirection = 1;
-	interval = 1800;
+	interval = 9800;
 	level = 0;
 	extTIrqHandler = gnrTIrqHandler;
 	extKIrqHandler = gnrKIrqHandler;
@@ -26,20 +27,24 @@ void greenAndRed(void){
 	lcdPrint("LEVEL 0", 10, 10);
 	objectDraw(&brick, 50, 152);
 	objectDraw(&flier, 150, 10);
-	timerSetMatch(interval);
 	greenCounter = 0;
 	redCounter = 0;
+	//timerSetMatch(interval);
+
+	int r = 1;
 	while(1){
-		do{
-			lcdSetFontColour(BRICK_COLOUR);
-			lcdDrawChar(10, 246, (char)(greenCounter+48));
-			lcdSetFontColour(63, 0, 0);
-			lcdDrawChar(10, 294, (char)(redCounter+48));
-		} while(intrTrace == 1);
-		wait(500000);
+		
+		irqDisableSec();
+		lcdSetFontColour(BRICK_COLOUR);
+		lcdDrawChar(10, 246, (char)(greenCounter+48));
+		lcdSetFontColour(63, 0, 0);
+		lcdDrawChar(10, 294, (char)(redCounter+48));
+		irqEnableSec();
+		waitCycles(0x6fffff);	
 		lcdFillWindow(10, 26, 246, 310, BACKGROUND_COLOUR);
-		wait(500000);	
+		waitCycles(0x6fffff);	
 	}	
+
 
 }
 void gnrTIrqHandler()
@@ -48,6 +53,7 @@ void gnrTIrqHandler()
 	else objectMoveRight(&flier);
 	if(flier.y==10) greenDirection=1;
 	else if(flier.y== (310-flier.width) && greenDirection!=0) greenDirection=0;
+	
 	if(detectCollision(&brick, &flier)){
 		greenCounter++;
 		wait(500000);
@@ -73,6 +79,8 @@ void gnrTIrqHandler()
 		redCounter = 0;
 		greenCounter = 0;
 	}
+	
+	return;
 }
 
 void gnrKIrqHandler(){
@@ -90,8 +98,13 @@ void gnrKIrqHandler(){
 		lcdFillWindow(brick.x, brick.x+brick.width - 1, brick.y, brick.y + brick.width - 1, BACKGROUND_COLOUR);
 		objectDraw(&brick, 50, 152);
 	}
-	
+	if(kBuffer == 0) lcdDrawChar(30, 10, (char)150);
+	if(kBuffer == 4) lcdFillWindow(30, 46, 10, 26, BACKGROUND_COLOUR);
+	if(kBuffer == 8){
+		timerSetMatch(9800);	
+	}
 
+	kBuffer = 16;	
 	/*else if (kBuffer == 6 && brick.y < 304) {
 		objectMoveRight(&brick);
 		wait(750);
@@ -100,3 +113,4 @@ void gnrKIrqHandler(){
 		wait(750);
 	}*/
 }
+

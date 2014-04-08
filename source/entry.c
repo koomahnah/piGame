@@ -1,17 +1,17 @@
 #include "lcd.h"
 #include "keyboard.h"
 #include "object.h"
-#include "armtimer.h"
+#include "timer.h"
 #include "irq.h"
 
 void intToStr(int a, char *str);
 void entry(){
 	irqLock = 0;
+	lcdInit(32);
 	lcdExtEntryFunct = irqDisableSec;
 	lcdExtExitFunct = irqEnableSec;
-	lcdInit(32);
 	keyboardInit();
-	timerInit();
+//	timerInit();
 	lcdDisplayON();
 	greenAndRed();
 //	snake();

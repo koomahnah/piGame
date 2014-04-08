@@ -157,12 +157,12 @@ void lcdPrint(const char *str, int x, int y){
 	of red and blue is cut				*/
 void lcdPixelsDraw(unsigned int amount, unsigned char red, unsigned char green, unsigned char blue)
 {
-	lcdOpenGRAM();
 	int i = 0;
 	red = red >> 1;
 	blue = blue >> 1;
 	unsigned char upper = (red << 3) + (green >> 3);
 	unsigned char lower = (green << 5) + blue;
+	lcdOpenGRAM();
 	for (i = 0; i < amount; i++) {
 		spiDataIO(upper);
 		spiDataIO(lower);
@@ -183,19 +183,31 @@ void lcdDrawChar(unsigned short int x, unsigned short int y, char character)
 	 * z=z*amount - bytes to skip
 	 */
 	z *= WIDTH * HEIGHT / 8;
-
+	unsigned char bUpper = ((background.red>>1)<<3) + (background.green>>3);
+	unsigned char bLower = (background.green<<5) + (background.blue>>1);
+	unsigned char fUpper = ((font.red>>1)<<3) + (font.green>>3);
+	unsigned char fLower = (font.green<<5) + (font.blue>>1);
 	lcdExtEntryFunct();
 	lcdSetWindow(x, x + HEIGHT - 1, y, y + WIDTH - 1);
 	lcdSetCursor(x, y);
 	lcdOpenGRAM();
 	int i, k;
+	/* pure nonsense to use shifting function here
+	   instead of shifting it on first
+	   */
 	for (i = 0; i < (WIDTH * HEIGHT / 8); i++) {
 		tmp = FONT_NAME[OFFSET + z + i];
 		for (k = 7; k >= 0; k--) {
-			if (!(tmp & (1 << k)))
-				lcdPixelsWrite(background.red, background.green, background.blue);
-			else
-				lcdPixelsWrite(font.red, font.green, font.blue);
+			if (!(tmp & (1 << k))){
+				spiDataIO(bUpper);
+				spiDataIO(bLower);
+				spiWaitTilDone();
+			}
+			else{
+				spiDataIO(fUpper);
+				spiDataIO(fLower);
+				spiWaitTilDone();
+			}
 		}
 	}
 	lcdCloseGRAM();
@@ -203,15 +215,13 @@ void lcdDrawChar(unsigned short int x, unsigned short int y, char character)
 }
 
 void lcdFillWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea, unsigned char red, unsigned char green, unsigned char blue){
-	do{
-		intrTrace = 0;
-		lcdSetWindow(hsa, hea, vsa, vea);
-		lcdSetCursor(hsa, vsa);
-		lcdPixelsDraw((hea - hsa + 1) * (vea - vsa + 1), red, green, blue);
-	} while (intrTrace == 1);
+	lcdExtEntryFunct();
+	lcdSetWindow(hsa, hea, vsa, vea);
+	lcdSetCursor(hsa, vsa);
+	lcdPixelsDraw((hea - hsa + 1) * (vea - vsa + 1), red, green, blue);
+	lcdExtExitFunct();
 }
 
-/*	secondary IRQ disable (not in CPSR)	*/
 void dummy(void){
 	return;
 }

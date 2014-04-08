@@ -34,3 +34,5 @@ void flashValue(int value, char length){
                 value=value>>1;
                 }
 }
+
+
