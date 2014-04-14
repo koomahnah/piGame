@@ -3,7 +3,6 @@
 #include "object.h"
 
 volatile unsigned int kBuffer = 16;
-volatile unsigned int kLock = 0;
 short int pinToGpio[9] = { 12, 22, 23, 24, 14, 15, 17, 18, 27 };
 
 /* pin 24 was pin 4 primarily here, but it has pull up instead of down	*/
@@ -13,7 +12,6 @@ void (*extKIrqHandler)(void) = 0;
 void keyboardInit()
 {
 	extKIrqHandler = 0;
-	kLock = 0;
 	kBuffer = 16;
 	int x;
 	/*
@@ -47,8 +45,6 @@ void keyboardInit()
 
 void kIrqHandler()
 {
-//	*(irqEnable2+3) = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
-//	kLock = 1;
 	unsigned int tmp;
 	int a, x;
 	for (a = 1; a <= 4; a++) {
@@ -87,7 +83,5 @@ void kIrqHandler()
 	}
 
 	if(extKIrqHandler!=0) extKIrqHandler();
-//	*irqEnable2 = ((1 << 20) | (1 << 19) | (1 << 18) | (1 << 17));
-//	kLock = 0;
 	return;
 }

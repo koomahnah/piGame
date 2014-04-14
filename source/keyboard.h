@@ -5,7 +5,6 @@ extern void irqDisable();
 void keyboardInit();
 void kIrqHandler();
 
-void (*extKIrqHandler)(void);
+extern void (*extKIrqHandler)(void);
 extern volatile unsigned int kBuffer;
 extern volatile unsigned int *irqEnable2;
-volatile unsigned int kLock;

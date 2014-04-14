@@ -73,10 +73,7 @@ keyboard:
 	ldr r0, =0x20200040
 	ldr r1, =0x8068000	@ clear event statuses
 	str r1, [r0]
-	ldr r0, =kLock
-	ldr r0, [r0]
-	cmp r0, $0
-	bleq kIrqHandler
+	bl kIrqHandler
 	pop {r0-r12, lr}
 	subs pc, lr, $4
 /*.globl main

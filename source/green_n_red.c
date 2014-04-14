@@ -14,7 +14,6 @@ static volatile int interval;
 static volatile int level;
 
 void greenAndRed(void){
-	timerInit();
 	greenDirection = 1;
 	interval = 9800;
 	level = 0;
