@@ -5,25 +5,25 @@
 #define	GPREN0			0x2020004c
 #define	GPLEV0			0x20200034
 
-#define INPUT   0
-#define OUTPUT  1
-#define ALT0    0b100
-#define ALT1    0b101
-#define ALT2    0b110
-#define ALT3    0b111
-#define ALT4    0b011
-#define ALT5    0b010
-#define NO      0
-#define DOWN    1
-#define UP      2
-#define RISE    0
-#define FALL    1
-#define HIGH    2
-#define LOW     3
-#define ARISE   4
-#define AFALL   5
-#define ENABLE	1
-#define	DISABLE	0
+#define GPINPUT   0
+#define GPOUTPUT  1
+#define GPALT0    0b100
+#define GPALT1    0b101
+#define GPALT2    0b110
+#define GPALT3    0b111
+#define GPALT4    0b011
+#define GPALT5    0b010
+#define GPNO      0
+#define GPDOWN    1
+#define GPUP      2
+#define GPRISE    0
+#define GPFALL    1
+#define GPHIGH    2
+#define GPLOW     3
+#define GPARISE   4
+#define GPAFALL   5
+#define GPENABLE	1
+#define	GPDISABLE	0
 
 #define	LONG_INTERVAL	1500000
 #define	SHORT_INTERVAL	250000
@@ -64,12 +64,12 @@ static inline int getPinLevel(int pinNumber){
 }
 
 static inline void flash(void){
-	setGpioFunct(16, OUTPUT);
+	setGpioFunct(16, GPOUTPUT);
 	clearPin(16); wait(1000000); setPin(16); wait(1000000);
 }
 
 static inline void flashTime(unsigned int time){
-        setGpioFunct(16, OUTPUT);
+        setGpioFunct(16, GPOUTPUT);
         clearPin(16); wait(time); setPin(16); wait(750000);
 }
 

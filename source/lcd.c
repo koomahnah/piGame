@@ -4,13 +4,16 @@ volatile int intrTrace;
 struct colour background = { 0, 0, 0 };
 struct colour font = { 0b111111, 0b111111, 0b111111 };
 
+void (*lcdExtEntryFunct)(void);
+void (*lcdExtExitFunct)(void);
+
 void lcdInit(int clock)
 {
 	intrTrace = 0;
 	spiInit(1, 1, clock);
 	lcdExtEntryFunct = dummy;
 	lcdExtExitFunct = dummy;
-	setGpioFunct(25, OUTPUT);
+	setGpioFunct(25, GPOUTPUT);
 
 	setPin(25);
 	wait(10000);
@@ -23,7 +26,7 @@ void lcdInit(int clock)
 	lcdRegWrite(0x00, 0x0000);
 	lcdRegWrite(0x01, 0x0);	/* Driver Output control */
 	lcdRegWrite(0x02, (1 << 10));	/* LCD Driver Waveform control */
-	lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 5) | (1 << 12) | (1 << 4) | (1 << 3));	/* Set the scan moe */
+	lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (1 << 5) | (1 << 4) | (1 << 3));	/* Set the scan moe */
 	lcdRegWrite(0x04, 0x0000);	/* Scalling control */
 	lcdRegWrite(0x08, 0x0202);	/* Display control 2 */
 	lcdRegWrite(0x09, 0x0000);	/* Display control 3 */

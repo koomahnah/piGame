@@ -1,5 +1,8 @@
 extern "C" {
+#ifndef _LCD_H
+#define _LCD_H
 #include "lcd.h"
+#endif
 #include "keyboard.h"
 #include "object.h"
 #include "timer.h"
@@ -16,13 +19,8 @@ extern "C" void entry(){
 	keyboardInit();
 	timerInit();
 	lcdDisplayON();
-	while(1){
-		if(kBuffer == 0){
-			p->a();
-			kBuffer = 16;
-		}
-	}
-	//greenAndRed();
+	pacmanGame();
+	while(1) continue;
 	return;
 }
 

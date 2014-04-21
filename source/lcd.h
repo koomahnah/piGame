@@ -1,5 +1,11 @@
+#ifndef _GPIO_H
+#define _GPIO_H
 #include "gpio.h"
+#endif
+#ifndef _SPI_H
+#define _SPI_H
 #include "spi.h"
+#endif
 
 /*	LCD START CODES     */
 #define INDEX_WRITE     0x70	//0b01110000
@@ -21,8 +27,8 @@ struct colour{
 extern struct colour background;
 extern struct colour font;
 
-void (*lcdExtEntryFunct)(void);
-void (*lcdExtExitFunct)(void);
+extern void (*lcdExtEntryFunct)(void);
+extern void (*lcdExtExitFunct)(void);
 /*
 	These will be called
 	on entry or exit of critical segments
@@ -43,6 +49,9 @@ void lcdOpenGRAM(void);
 void lcdCloseGRAM(void);
 void lcdSetWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea);
 void lcdPrint(const char *str, int x, int y);
+void lcdFillWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea, unsigned char red, unsigned char green, unsigned char blue);
+void lcdPixelsDraw(unsigned int amount, unsigned char red, unsigned char green, unsigned char blue);
+
 void dummy(void);
 static inline void lcdDisplayON(void);
 static inline void lcdSetCursor(unsigned short int, unsigned short int);

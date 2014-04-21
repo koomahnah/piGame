@@ -19,18 +19,18 @@ void keyboardInit()
 	 * detecting rising edge
 	 */
 	for (x = 5; x <= 8; x++) {
-		setGpioFunct(pinToGpio[x], INPUT);
-		setPull(pinToGpio[x], DOWN);
-		setDetect(pinToGpio[x], ENABLE, HIGH);
+		setGpioFunct(pinToGpio[x], GPINPUT);
+		setPull(pinToGpio[x], GPDOWN);
+		setDetect(pinToGpio[x], GPENABLE, GPHIGH);
 	}
 	/*
 	 * turn 1-4 lines high to allow interrupt
 	 * to be generated
 	 */
 	for (x = 1; x <= 4; x++) {
-		setGpioFunct(pinToGpio[x], OUTPUT);
+		setGpioFunct(pinToGpio[x], GPOUTPUT);
 		setPin(pinToGpio[x]);
-		setPull(pinToGpio[x], DOWN);
+		setPull(pinToGpio[x], GPDOWN);
 	}
 	/*
 	 * sets interrupt controller
@@ -55,10 +55,10 @@ void kIrqHandler()
 
 		for (x = 1; x <= 4; x++) {
 			if (x != a) {
-				setGpioFunct(pinToGpio[x], INPUT);
+				setGpioFunct(pinToGpio[x], GPINPUT);
 			}
 		}
-		setGpioFunct(pinToGpio[a], OUTPUT);
+		setGpioFunct(pinToGpio[a], GPOUTPUT);
 		setPin(pinToGpio[a]);
 
 		waitCycles(30);
@@ -78,7 +78,7 @@ void kIrqHandler()
 	}
 
  exit:	for (x = 1; x <= 4; x++) {
-		setGpioFunct(pinToGpio[x], OUTPUT);
+		setGpioFunct(pinToGpio[x], GPOUTPUT);
 		setPin(pinToGpio[x]);
 	}
 
