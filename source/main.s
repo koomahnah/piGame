@@ -1,5 +1,5 @@
 .extern entry
-.extern kLock
+//.extern __stack_chk_guard_setup
 .section .init
 .globl _start
 _start:
@@ -52,6 +52,7 @@ loop:
 	blo loop
 
 @	b main
+@	bl __stack_chk_guard_setup
 	bl entry
 dummy:
 	b dummy

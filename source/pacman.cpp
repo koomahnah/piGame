@@ -15,7 +15,7 @@ int keyToDir(int key){
 		return 0;
 		break;
 	default:
-		return 4;
+		return 0;
 		break;
 	}
 }
@@ -35,26 +35,26 @@ void pacmanGame(){
 	myMap.putRectangle(10,13,0,5,2);
 	myMap.putRectangle(10,13,5,14,2);
 	myMap.setup();
+	lcdSetBackgroundColour(TUNNEL_COLOUR);
 	enemy one(1,0,&myMap);
 	enemy two(1,14,&myMap);
 	enemy three(5,0,&myMap);
 	pacman four(1,8,&myMap);
-	int e = 0;
+	int b=0;
 	while(1){
 		one.go();
-		e++;
-		lcdDrawChar(30,300,(char)(e%10)+48);
 		two.go();
 		three.go();
 		four.go(keyToDir(kBuffer));
-//		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (7 << 3));
-		intToStr(153, pointen);
-		lcdPrint(50,272,pointen);
+		intToStr(four.eaten, pointen);
+		lcdPrint(10,272,pointen);
 		if(four.eaten==myMap.points){
 			lcdFillWindow(0,239,0,319, BACKGROUND_COLOUR);
-			lcdPrint(112, 50, "WIN WIN WIN");
+			lcdPrint(112, 60, "WIN WIN WIN");
 			return;
 		}
-		wait(10000);
+		if(b==0) wait(6000);
+		else wait(100000);
+		if(kBuffer==3) b = 1;
 	}
 }

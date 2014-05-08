@@ -4,7 +4,7 @@ extern "C" {
 #include "lcd.h"
 #endif
 #include "keyboard.h"
-#include "object.h"
+//#include "object.h"
 #include "timer.h"
 #include "irq.h"
 }
@@ -19,8 +19,8 @@ extern "C" void entry(){
 	keyboardInit();
 	timerInit();
 	lcdDisplayON();
-	greenAndRed();
-//	pacmanGame();
+//	greenAndRed();
+	pacmanGame();
 	while(1) continue;
 	return;
 }

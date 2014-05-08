@@ -23,7 +23,7 @@ void greenAndRed(void){
 	lcdPixelsDraw(240*320, BACKGROUND_COLOUR);
 	lcdSetBackgroundColour(BACKGROUND_COLOUR);
 	lcdSetFontColour(BRICK_COLOUR);
-	lcdPrint(10, 10,"LEVEL 0");
+	lcdPrint(10,10, "LEVEL 0");
 	objectDraw(&brick, 50, 152);
 	objectDraw(&flier, 150, 10);
 	greenCounter = 0;

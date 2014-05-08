@@ -1,5 +1,7 @@
-#define	BACKGROUND_COLOUR	13,2,19
+/*#define	BACKGROUND_COLOUR	13,2,19*/
+#define BACKGROUND_COLOUR	15, 4, 22
 #define FOREGROUND_COLOUR	10,56,19
+#define	TUNNEL_COLOUR		0, 0, 0
 extern "C" {
 #ifndef _LCD_H
 #define _LCD_H

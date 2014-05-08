@@ -75,25 +75,25 @@ void player::move(int dir){
 	{
 	case 0:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (2 << 3));
-		lcdFillWindow(x-X_OFFSET, x-X_OFFSET + 15, y-Y_OFFSET, y-Y_OFFSET, BACKGROUND_COLOUR);
+		lcdFillWindow(x-X_OFFSET, x-X_OFFSET + 15, y-Y_OFFSET, y-Y_OFFSET, TUNNEL_COLOUR);
 		lcdDrawChar(x-X_OFFSET, y-Y_OFFSET + 1, icon);
 		y++;
 		break;
 	case 1:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (7 << 3));
-		lcdFillWindow(x-X_OFFSET + 15, x-X_OFFSET + 15, y-Y_OFFSET, y-Y_OFFSET + 15, BACKGROUND_COLOUR);
+		lcdFillWindow(x-X_OFFSET + 15, x-X_OFFSET + 15, y-Y_OFFSET, y-Y_OFFSET + 15, TUNNEL_COLOUR);
 		lcdDrawChar(x-X_OFFSET - 1, y-Y_OFFSET, icon);
 		x--;
 		break;
 	case 2:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (6 << 3));
-		lcdFillWindow(x-X_OFFSET, x-X_OFFSET + 15, y-Y_OFFSET + 15, y-Y_OFFSET + 15, BACKGROUND_COLOUR);
+		lcdFillWindow(x-X_OFFSET, x-X_OFFSET + 15, y-Y_OFFSET + 15, y-Y_OFFSET + 15, TUNNEL_COLOUR);
 		lcdDrawChar(x-X_OFFSET, y-Y_OFFSET - 1, icon);
 		y--;
 		break;
 	case 3:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (5 << 3));
-		lcdFillWindow(x-X_OFFSET, x-X_OFFSET, y-Y_OFFSET, y-Y_OFFSET + 15, BACKGROUND_COLOUR);
+		lcdFillWindow(x-X_OFFSET, x-X_OFFSET, y-Y_OFFSET, y-Y_OFFSET + 15, TUNNEL_COLOUR);
 		lcdDrawChar(x-X_OFFSET + 1, y-Y_OFFSET, icon);
 		x++;
 		break;
@@ -179,11 +179,9 @@ void enemy::go(){
 	row = x/16;
 	col = y/16;
 	int dir;
-	int i = 0;
 	while(1){
 		dir=rand()%4;
-		i++;
-		lcdDrawChar(10,300,(char)((i%10)+48));
+		wait(100);
 		if(dir==(lastDir+2)%4) continue;
 		else if(goodDir(dir)){
 			this->move(dir);
@@ -210,6 +208,11 @@ void map::putInfo(int row, int col, unsigned char info){
 	terrain[row][col/4] = tmp;
 }
 void map::putRectangle(int vs, int ve, int hs, int he, unsigned char info){
+	lcdFillWindow(vs*16,(ve*16)+16,hs*16,(hs*16)+16, TUNNEL_COLOUR);
+	lcdFillWindow(vs*16,(ve*16)+16,he*16,(he*16)+16, TUNNEL_COLOUR);
+	lcdFillWindow(vs*16,(vs*16)+16,hs*16,(he*16)+16, TUNNEL_COLOUR);
+	lcdFillWindow(ve*16,(ve*16)+16,hs*16,(he*16)+16, TUNNEL_COLOUR);
+
 	for(int i=0;i<=(he-hs);i++){
 		this->putInfo(vs,i+hs,info);
 		this->putInfo(ve,i+hs,info);

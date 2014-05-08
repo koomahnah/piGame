@@ -1,0 +1,16 @@
+#include "gpio.h"
+void * __stack_chk_guard;
+ 
+void __stack_chk_guard_setup()
+{
+	unsigned char * p;
+	p = (unsigned char *) &__stack_chk_guard;
+	*p =  0x00000aff;
+}
+ 
+void __attribute__((noreturn)) __stack_chk_fail()
+{
+	setGpioFunct(16, GPOUTPUT);
+	clearPin(16);
+	while(1) continue;
+}
