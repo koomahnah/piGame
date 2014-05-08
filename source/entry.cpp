@@ -9,7 +9,7 @@ extern "C" {
 #include "irq.h"
 }
 #include "pacman.h"
-
+extern "C" void greenAndRed(void);
 void intToStr(int a, char *str);
 extern "C" void entry(){
 	irqLock = 0;
@@ -19,7 +19,8 @@ extern "C" void entry(){
 	keyboardInit();
 	timerInit();
 	lcdDisplayON();
-	pacmanGame();
+	greenAndRed();
+//	pacmanGame();
 	while(1) continue;
 	return;
 }

@@ -145,8 +145,9 @@ void lcdSetWindow(unsigned short int hsa, unsigned short int hea, unsigned short
 	} while (intrTrace == 1);
 }
 
-void lcdPrint(const char *str, int x, int y){
+void lcdPrint(int x, int y, const char *str){
 	int i;
+	lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (7 << 3));
         for(i=0;str[i]!='\0';i++){
                 if(y+(WIDTH*(i+1))<=320)
                         lcdDrawChar(x, y+(WIDTH*i), str[i]);
@@ -179,7 +180,7 @@ void lcdDrawChar(unsigned short int x, unsigned short int y, char character)
 	char tmp;
 	int z = (int)character;
 	z -= 32;
-	if(z>94) z='A'-32;
+	if(z>94) z='E'-32;
 	/*
 	 * WIDTH*HEIGHT/8 - amount of bytes describing
 	 * 1 character

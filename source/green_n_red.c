@@ -15,7 +15,7 @@ static volatile int level;
 
 void greenAndRed(void){
 	greenDirection = 1;
-	interval = 9800;
+	interval = 2800;
 	level = 0;
 	extTIrqHandler = gnrTIrqHandler;
 	extKIrqHandler = gnrKIrqHandler;
@@ -23,14 +23,13 @@ void greenAndRed(void){
 	lcdPixelsDraw(240*320, BACKGROUND_COLOUR);
 	lcdSetBackgroundColour(BACKGROUND_COLOUR);
 	lcdSetFontColour(BRICK_COLOUR);
-	lcdPrint("LEVEL 0", 10, 10);
+	lcdPrint(10, 10,"LEVEL 0");
 	objectDraw(&brick, 50, 152);
 	objectDraw(&flier, 150, 10);
 	greenCounter = 0;
 	redCounter = 0;
-	//timerSetMatch(interval);
+	timerSetMatch(interval);
 
-	int r = 1;
 	while(1){
 		
 		irqDisableSec();
@@ -62,7 +61,7 @@ void gnrTIrqHandler()
 	if(greenCounter>=5 || redCounter >= 5){
 		lcdSetFontColour(63, 0, 0);
 		if(greenCounter>=redCounter){
-			lcdPrint("SEHR GUT", 112, 96);
+			lcdPrint(112, 96, "SEHR GUT");
 			lcdFillWindow(10, 26, 106, 122, BACKGROUND_COLOUR);
 			lcdSetFontColour(BRICK_COLOUR);
 			if(flier.width >= 11){
@@ -72,7 +71,7 @@ void gnrTIrqHandler()
 			lcdDrawChar(10, 106, (char)(level+48));
 		}
 		else
-			lcdPrint("SEHR SCHLECHT", 112, 56);
+			lcdPrint(112, 56, "SEHR SCHLECHT");
 		wait(3000000);
 		lcdFillWindow(112, 128, 56, 264, BACKGROUND_COLOUR);
 		redCounter = 0;

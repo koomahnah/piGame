@@ -48,7 +48,7 @@ void lcdDrawChar(unsigned short int x, unsigned short int y, char character);
 void lcdOpenGRAM(void);
 void lcdCloseGRAM(void);
 void lcdSetWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea);
-void lcdPrint(const char *str, int x, int y);
+void lcdPrint(int x, int y, const char *str);
 void lcdFillWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea, unsigned char red, unsigned char green, unsigned char blue);
 void lcdPixelsDraw(unsigned int amount, unsigned char red, unsigned char green, unsigned char blue);
 
