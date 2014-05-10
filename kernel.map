@@ -1,0 +1,268 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+lcdExtEntryFunct    0x4               build/lcd.o
+irqLock             0x4               build/irq.o
+intrTrace           0x4               build/lcd.o
+lcdExtExitFunct     0x4               build/lcd.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/irqs.o
+LOAD build/main.o
+LOAD build/timers.o
+LOAD build/gpio.o
+LOAD build/green_n_red.o
+LOAD build/irq.o
+LOAD build/keyboard.o
+LOAD build/lcd.o
+LOAD build/object.o
+LOAD build/Sinclair_Inverted_M.o
+LOAD build/spi.o
+LOAD build/timer.o
+LOAD build/entry.o
+LOAD build/pacmanClass.o
+LOAD build/pacman.o
+
+.init           0x00008000       0xfc
+ *(.init)
+ .init          0x00008000       0xfc build/main.o
+                0x00008000                _start
+
+.text           0x000080fc     0x2cc0
+ *(.text)
+ .text          0x000080fc       0x24 build/irqs.o
+                0x000080fc                irqEnable
+                0x0000810c                irqDisable
+ .text          0x00008120        0x0 build/main.o
+ .text          0x00008120       0xe0 build/timers.o
+                0x00008120                getTimerAddr
+                0x00008128                waitCycles
+                0x00008138                wait
+                0x00008178                pushCounter
+                0x000081ac                pollCounter
+ .text          0x00008200      0x154 build/gpio.o
+                0x00008200                setGpioFunct
+                0x0000824c                setPull
+                0x000082c8                flashValue
+ .text          0x00008354      0x588 build/green_n_red.o
+                0x00008354                gnrKIrqHandler
+                0x000084f8                gnrTIrqHandler
+                0x00008724                greenAndRed
+ .text          0x000088dc       0x80 build/irq.o
+                0x000088dc                irqDisableSec
+                0x0000891c                irqEnableSec
+ .text          0x0000895c      0x2e0 build/keyboard.o
+                0x0000895c                keyboardInit
+                0x00008a78                kIrqHandler
+ .text          0x00008c3c      0x980 build/lcd.o
+                0x00008c3c                dummy
+                0x00008c40                lcdRegWrite
+                0x00008d14                lcdInit
+                0x00008fc0                lcdRegRead
+                0x000090c0                lcdOpenGRAM
+                0x00009150                lcdCloseGRAM
+                0x0000918c                lcdSetWindow
+                0x000091f8                lcdPixelsDraw
+                0x000092a4                lcdDrawChar
+                0x00009470                lcdPrint
+                0x00009504                lcdFillWindow
+ .text          0x000095bc      0x5dc build/object.o
+                0x000095bc                objectDraw
+                0x00009658                objectMoveUp
+                0x00009790                objectMoveDown
+                0x000098a8                objectMoveRight
+                0x000099c0                objectMoveLeft
+                0x00009af8                detectCollision
+ .text          0x00009b98        0x0 build/Sinclair_Inverted_M.o
+ .text          0x00009b98       0x70 build/spi.o
+                0x00009b98                spiInit
+ .text          0x00009c08       0xa4 build/timer.o
+                0x00009c08                timerInit
+                0x00009c38                timerSetMatch
+                0x00009c68                tIrqHandler
+ .text          0x00009cac      0x100 build/entry.o
+                0x00009cac                entry
+                0x00009d1c                intToStr(int, char*)
+ .text          0x00009dac      0xd5c build/pacmanClass.o
+                0x00009dac                pacman::pacman(int, int, map*)
+                0x00009dac                pacman::pacman(int, int, map*)
+                0x00009e00                enemy::enemy(int, int, map*)
+                0x00009e00                enemy::enemy(int, int, map*)
+                0x00009e50                player::goodDir(int)
+                0x00009f74                player::move(int)
+                0x0000a1c0                pacman::go(int)
+                0x0000a314                player::put(int, int, int)
+                0x0000a420                map::map()
+                0x0000a420                map::map()
+                0x0000a448                map::getInfo(int, int)
+                0x0000a48c                map::putInfo(int, int, unsigned char)
+                0x0000a4dc                map::setup()
+                0x0000a550                rand()
+                0x0000a598                drawPoint(int, int)
+                0x0000a5e8                map::putRectangle(int, int, int, int, unsigned char)
+                0x0000a8b0                enemy::go()
+ .text          0x0000ab08      0x2b4 build/pacman.o
+                0x0000ab08                keyToDir(int)
+                0x0000ab24                pacmanGame()
+
+.data           0x0000adbc       0x7c
+ *(.data)
+ .data          0x0000adbc        0x0 build/irqs.o
+ .data          0x0000adbc        0x0 build/main.o
+ .data          0x0000adbc        0x8 build/timers.o
+ .data          0x0000adc4       0x18 build/gpio.o
+                0x0000adc4                gpioBase
+                0x0000adc8                gppud
+                0x0000adcc                gpclear0
+                0x0000add0                gpset0
+                0x0000add4                gplev0
+                0x0000add8                gpren0
+ .data          0x0000addc       0x18 build/green_n_red.o
+                0x0000addc                brick
+                0x0000ade8                flier
+ .data          0x0000adf4        0x8 build/irq.o
+                0x0000adf4                irqEnable2
+                0x0000adf8                irqEnable1
+ .data          0x0000adfc       0x28 build/keyboard.o
+                0x0000adfc                kBuffer
+                0x0000ae00                pinToGpio
+                0x0000ae14                keyboardArray
+ .data          0x0000ae24        0x4 build/lcd.o
+                0x0000ae24                font
+ .data          0x0000ae28        0x0 build/object.o
+ .data          0x0000ae28        0x0 build/Sinclair_Inverted_M.o
+ .data          0x0000ae28        0xc build/spi.o
+                0x0000ae28                spiControl
+                0x0000ae2c                spiClock
+                0x0000ae30                spiFIFO
+ .data          0x0000ae34        0x4 build/timer.o
+                0x0000ae34                timercs
+ .data          0x0000ae38        0x0 build/entry.o
+ .data          0x0000ae38        0x0 build/pacmanClass.o
+ .data          0x0000ae38        0x0 build/pacman.o
+
+.rodata         0x0000ae38      0xbfc
+ *(.rodata)
+ .rodata        0x0000ae38      0xbe4 build/Sinclair_Inverted_M.o
+                0x0000ae38                Sinclair_Inverted_M
+ .rodata        0x0000ba1c       0x18 build/pacman.o
+                0x0000ba34                _bss_start = .
+
+.bss            0x0000ba34       0x24
+ *(.bss)
+ .bss           0x0000ba34        0x0 build/irqs.o
+ .bss           0x0000ba34        0x0 build/main.o
+ .bss           0x0000ba34        0x0 build/timers.o
+ .bss           0x0000ba34        0x0 build/gpio.o
+ .bss           0x0000ba34       0x14 build/green_n_red.o
+ .bss           0x0000ba48        0x0 build/irq.o
+ .bss           0x0000ba48        0x4 build/keyboard.o
+                0x0000ba48                extKIrqHandler
+ .bss           0x0000ba4c        0x4 build/lcd.o
+                0x0000ba4c                background
+ .bss           0x0000ba50        0x0 build/object.o
+ .bss           0x0000ba50        0x0 build/Sinclair_Inverted_M.o
+ .bss           0x0000ba50        0x0 build/spi.o
+ .bss           0x0000ba50        0x8 build/timer.o
+                0x0000ba50                extTIrqHandler
+ .bss           0x0000ba58        0x0 build/entry.o
+ .bss           0x0000ba58        0x0 build/pacmanClass.o
+ .bss           0x0000ba58        0x0 build/pacman.o
+                0x0000ba58                _bss_end = .
+
+.else           0x0000ba58      0x2aa
+ *(*)
+ .glue_7        0x00000000        0x0 linker stubs
+ .glue_7t       0x00000000        0x0 linker stubs
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+ .v4_bx         0x00000000        0x0 linker stubs
+ .ARM.attributes
+                0x0000ba58       0x16 build/irqs.o
+ .iplt          0x00000000        0x0 build/irqs.o
+ .rel.iplt      0x00000000        0x0 build/irqs.o
+ .igot.plt      0x00000000        0x0 build/irqs.o
+ .ARM.attributes
+                0x0000ba6e       0x14 build/main.o
+ .ARM.attributes
+                0x0000ba82       0x14 build/timers.o
+ .comment       0x0000ba96       0x2b build/gpio.o
+                                 0x2c (size before relaxing)
+ .note.GNU-stack
+                0x0000bac1        0x0 build/gpio.o
+ .ARM.attributes
+                0x0000bac1       0x2a build/gpio.o
+ *fill*         0x0000baeb        0x1 
+ .rodata.str1.4
+                0x0000baec       0x24 build/green_n_red.o
+ .comment       0x00000000       0x2c build/green_n_red.o
+ .note.GNU-stack
+                0x0000bb10        0x0 build/green_n_red.o
+ .ARM.attributes
+                0x0000bb10       0x2a build/green_n_red.o
+ .comment       0x00000000       0x2c build/irq.o
+ .note.GNU-stack
+                0x0000bb3a        0x0 build/irq.o
+ .ARM.attributes
+                0x0000bb3a       0x2a build/irq.o
+ COMMON         0x0000bb64        0x4 build/irq.o
+                0x0000bb64                irqLock
+ .comment       0x00000000       0x2c build/keyboard.o
+ .note.GNU-stack
+                0x0000bb68        0x0 build/keyboard.o
+ .ARM.attributes
+                0x0000bb68       0x2a build/keyboard.o
+ .comment       0x00000000       0x2c build/lcd.o
+ .note.GNU-stack
+                0x0000bb92        0x0 build/lcd.o
+ .ARM.attributes
+                0x0000bb92       0x2a build/lcd.o
+ COMMON         0x0000bbbc        0xc build/lcd.o
+                0x0000bbbc                lcdExtEntryFunct
+                0x0000bbc0                intrTrace
+                0x0000bbc4                lcdExtExitFunct
+ .comment       0x00000000       0x2c build/object.o
+ .note.GNU-stack
+                0x0000bbc8        0x0 build/object.o
+ .ARM.attributes
+                0x0000bbc8       0x2a build/object.o
+ .comment       0x00000000       0x2c build/Sinclair_Inverted_M.o
+ .note.GNU-stack
+                0x0000bbf2        0x0 build/Sinclair_Inverted_M.o
+ .ARM.attributes
+                0x0000bbf2       0x2a build/Sinclair_Inverted_M.o
+ .comment       0x00000000       0x2c build/spi.o
+ .note.GNU-stack
+                0x0000bc1c        0x0 build/spi.o
+ .ARM.attributes
+                0x0000bc1c       0x2a build/spi.o
+ .comment       0x00000000       0x2c build/timer.o
+ .note.GNU-stack
+                0x0000bc46        0x0 build/timer.o
+ .ARM.attributes
+                0x0000bc46       0x2a build/timer.o
+ .comment       0x00000000       0x2c build/entry.o
+ .note.GNU-stack
+                0x0000bc70        0x0 build/entry.o
+ .ARM.attributes
+                0x0000bc70       0x2a build/entry.o
+ .comment       0x00000000       0x2c build/pacmanClass.o
+ .note.GNU-stack
+                0x0000bc9a        0x0 build/pacmanClass.o
+ .ARM.attributes
+                0x0000bc9a       0x2a build/pacmanClass.o
+ .rodata.str1.4
+                0x0000bcc4       0x14 build/pacman.o
+ .comment       0x00000000       0x2c build/pacman.o
+ .note.GNU-stack
+                0x0000bcd8        0x0 build/pacman.o
+ .ARM.attributes
+                0x0000bcd8       0x2a build/pacman.o
+                0x0000bd02                _end = .
+OUTPUT(build/output.elf elf32-littlearm)

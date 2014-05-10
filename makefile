@@ -31,7 +31,7 @@ LINKER = kernel.ld
 
 # The names of all object files that must be generated. Deduced from the 
 # assembly code files in source.
-OBJECTS := $(patsubst $(SOURCE)%.s,$(BUILD)%.o,$(wildcard $(SOURCE)*.s)) $(patsubst $(SOURCE)%.c,$(BUILD)%.o,$(wildcard $(SOURCE)*.c))
+OBJECTS := $(patsubst $(SOURCE)%.s,$(BUILD)%.o,$(wildcard $(SOURCE)*.s)) $(patsubst $(SOURCE)%.c,$(BUILD)%.o,$(wildcard $(SOURCE)*.c)) $(patsubst $(SOURCE)%.cpp,$(BUILD)%.o,$(wildcard $(SOURCE)*.cpp))
 
 # Rule to make everything.
 all: $(TARGET) $(LIST)
@@ -57,8 +57,11 @@ $(BUILD)%.o: $(SOURCE)%.s
 	$(ARMGNU)-as -I $(SOURCE) $< -o $@
 
 $(BUILD)%.o: $(SOURCE)%.c
-	$(ARMGNU)-gcc-4.7 -fno-exceptions -O2 $< -c -o $@ 
+	$(ARMGNU)-gcc-4.7 -fno-exceptions -O2 $< -c -o $@
 
+$(BUILD)%.o: $(SOURCE)%.cpp
+	$(ARMGNU)-g++-4.7 -fno-stack-protector -fno-exceptions -O2 $< -c -o $@
+# -fno-stack-protector 
 # Rule to clean files.
 clean : 
 	-rm -f $(BUILD)*.o 

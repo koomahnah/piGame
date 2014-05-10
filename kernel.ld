@@ -23,6 +23,10 @@ SECTIONS {
 	.data : {
 		*(.data)
 	}
+	.rodata :
+	{
+		*(.rodata)
+	}
 	_bss_start = .;
 	.bss : {
 		*(.bss)
@@ -31,5 +35,5 @@ SECTIONS {
 	.else : {
 		*(*)
 	}
-	_else_end = .;
+	_end = .;
 }
