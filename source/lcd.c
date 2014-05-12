@@ -217,7 +217,48 @@ void lcdDrawChar(unsigned short int x, unsigned short int y, char character)
 	lcdCloseGRAM();
 	lcdExtExitFunct();
 }
-
+void lcdDrawCharC(unsigned short int x, unsigned short int y, char character, struct colour *b, struct colour *f) 
+{
+	char tmp;
+	int z = (int)character;
+	z -= 32;
+	if(z>94) z='E'-32;
+	/*
+	 * WIDTH*HEIGHT/8 - amount of bytes describing
+	 * 1 character
+	 * z=z*amount - bytes to skip
+	 */
+	z *= WIDTH * HEIGHT / 8;
+	unsigned char bUpper = ((b->red>>1)<<3) + (b->green>>3);
+	unsigned char bLower = (b->green<<5) + (b->blue>>1);
+	unsigned char fUpper = ((f->red>>1)<<3) + (f->green>>3);
+	unsigned char fLower = (f->green<<5) + (f->blue>>1);
+	lcdExtEntryFunct();
+	lcdSetWindow(x, x + HEIGHT - 1, y, y + WIDTH - 1);
+	lcdSetCursor(x, y);
+	lcdOpenGRAM();
+	int i, k;
+	/* pure nonsense to use shifting function here
+	   instead of shifting it on first
+	   */
+	for (i = 0; i < (WIDTH * HEIGHT / 8); i++) {
+		tmp = FONT_NAME[OFFSET + z + i];
+		for (k = 7; k >= 0; k--) {
+			if (!(tmp & (1 << k))){
+				spiDataIO(bUpper);
+				spiDataIO(bLower);
+				spiWaitTilDone();
+			}
+			else{
+				spiDataIO(fUpper);
+				spiDataIO(fLower);
+				spiWaitTilDone();
+			}
+		}
+	}
+	lcdCloseGRAM();
+	lcdExtExitFunct();
+}
 void lcdFillWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea, unsigned char red, unsigned char green, unsigned char blue){
 	lcdExtEntryFunct();
 	lcdSetWindow(hsa, hea, vsa, vea);

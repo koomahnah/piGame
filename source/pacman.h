@@ -1,6 +1,10 @@
-/*#define	BACKGROUND_COLOUR	13,2,19*/
+/*#define	BACKGROUND_COLOUR	13,2,19
 #define BACKGROUND_COLOUR	15, 4, 22
 #define FOREGROUND_COLOUR	10,56,19
+#define	TUNNEL_COLOUR		0, 0, 0
+*/
+#define BACKGROUND_COLOUR	14, 22, 48
+#define FOREGROUND_COLOUR	52, 54, 61
 #define	TUNNEL_COLOUR		0, 0, 0
 extern "C" {
 #ifndef _LCD_H
@@ -35,29 +39,38 @@ public:
 	void put(int row, int col, int dir);
 protected:
 	void move(int dir);
+	int goodDir(int dir);
+	map *pMap;
 	int lastDir;
 	int x;
 	int y;
-	map *pMap;
-	int goodDir(int dir);
+	int defRow;
+	int defCol;
 	char icon;
+	static struct colour pb;
+	static struct colour pf;
 };
 
 class pacman : public player
 {
 public:
 	pacman(int row, int col, map *pp);
-	void go(int dir);
+	int go(int dir);
+	int lifes;
 	int eaten;
 protected:
-	int detColl();
+	int collision();
 };
 
 class enemy : public player
 {
+	friend class pacman;
 public:
 	enemy(int row, int col, map *pp);
+	~enemy();
 	void go();
+protected:
+	static enemy * list[5];
 };
 void pacmanGame();
 int rand();

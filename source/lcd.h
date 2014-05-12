@@ -45,13 +45,13 @@ void lcdInit(int);
 void lcdRegWrite(unsigned char, unsigned short int);
 unsigned short int lcdRegRead(unsigned char index);
 void lcdDrawChar(unsigned short int x, unsigned short int y, char character);
+void lcdDrawCharC(unsigned short int x, unsigned short int y, char character, struct colour *b, struct colour *f); 
 void lcdOpenGRAM(void);
 void lcdCloseGRAM(void);
 void lcdSetWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea);
 void lcdPrint(int x, int y, const char *str);
 void lcdFillWindow(unsigned short int hsa, unsigned short int hea, unsigned short int vsa, unsigned short int vea, unsigned char red, unsigned char green, unsigned char blue);
 void lcdPixelsDraw(unsigned int amount, unsigned char red, unsigned char green, unsigned char blue);
-
 void dummy(void);
 static inline void lcdDisplayON(void);
 static inline void lcdSetCursor(unsigned short int, unsigned short int);

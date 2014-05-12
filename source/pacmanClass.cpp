@@ -1,13 +1,18 @@
 #include "pacman.h"
-
+enemy *enemy::list[] = {0, 0, 0, 0, 0};
+struct colour player::pb = { TUNNEL_COLOUR };
+struct colour player::pf = { FOREGROUND_COLOUR }; 
 pacman::pacman(int row, int col, map *pp){
 	x=row*16+8;
 	y=col*16+8;
 	lastDir = 0;
 	pMap=pp;
+	lifes = 3;
 	eaten = 0;
 	icon = 'V';
-	lcdDrawChar(x-X_OFFSET, y-Y_OFFSET, icon);
+	defRow = row;
+	defCol = col;
+	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, &pb, &pf);
 }
 
 enemy::enemy(int row, int col, map *pp){
@@ -16,10 +21,35 @@ enemy::enemy(int row, int col, map *pp){
 	lastDir = 0;
 	pMap=pp;
 	icon = 'O';
-	lcdDrawChar(x-X_OFFSET, y-Y_OFFSET, icon);
+	defRow = row;
+	defCol = col;
+	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, &pb, &pf);
+	for(int i=0;i<5;i++)
+		if(list[i]==0){
+			list[i]=this;
+			break;
+		}
 }
-
-void pacman::go(int dir){
+enemy::~enemy(){
+	lcdFillWindow(x-X_OFFSET, x-X_OFFSET+15, y-Y_OFFSET, y-Y_OFFSET+15, TUNNEL_COLOUR);
+	for(int i=0;i<5;i++)
+		if(list[i]==this){
+			list[i]=0;
+			break;
+		}
+}
+int pacman::go(int dir){
+	if(this->eaten==pMap->points) return 1;
+	if(this->collision()){
+		lifes--;
+		if(lifes==0){
+			return 2;
+		}
+		else{
+			lifes--;
+			return 3;
+		}
+	}
 	if( (x%16)!=8 || (y%16)!=8 ){
 		if( (dir&1)==(lastDir&1)){
 			this->move(dir);
@@ -27,7 +57,7 @@ void pacman::go(int dir){
 		}
 		else
 			this->move(lastDir);
-		return;
+		return 0;
 	}
 
 	int row = x/16;
@@ -41,7 +71,21 @@ void pacman::go(int dir){
 		this->move(dir);
 	} else if(goodDir(lastDir)){
 		this->move(lastDir);
-	} else return;
+	} else return 0;
+	return 0;
+}
+
+int pacman::collision(){
+	for(int i=0;i<5;i++){
+		if(enemy::list[i]!=0){
+			int xe=(enemy::list[i])->x;
+			int ye=(enemy::list[i])->y;
+			int sqDist = (this->x-xe)*(this->x-xe);
+			sqDist+= (this->y-ye)*(this->y-ye);
+			if(sqDist<=256) return 1;
+		}
+	}
+	return 0;
 }
 int player::goodDir(int dir){
 	int row = x/16;
@@ -76,25 +120,25 @@ void player::move(int dir){
 	case 0:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (2 << 3));
 		lcdFillWindow(x-X_OFFSET, x-X_OFFSET + 15, y-Y_OFFSET, y-Y_OFFSET, TUNNEL_COLOUR);
-		lcdDrawChar(x-X_OFFSET, y-Y_OFFSET + 1, icon);
+		lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET + 1, icon, &pb, &pf);
 		y++;
 		break;
 	case 1:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (7 << 3));
 		lcdFillWindow(x-X_OFFSET + 15, x-X_OFFSET + 15, y-Y_OFFSET, y-Y_OFFSET + 15, TUNNEL_COLOUR);
-		lcdDrawChar(x-X_OFFSET - 1, y-Y_OFFSET, icon);
+		lcdDrawCharC(x-X_OFFSET - 1, y-Y_OFFSET, icon, &pb, &pf);
 		x--;
 		break;
 	case 2:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (6 << 3));
 		lcdFillWindow(x-X_OFFSET, x-X_OFFSET + 15, y-Y_OFFSET + 15, y-Y_OFFSET + 15, TUNNEL_COLOUR);
-		lcdDrawChar(x-X_OFFSET, y-Y_OFFSET - 1, icon);
+		lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET - 1, icon, &pb, &pf);
 		y--;
 		break;
 	case 3:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (5 << 3));
 		lcdFillWindow(x-X_OFFSET, x-X_OFFSET, y-Y_OFFSET, y-Y_OFFSET + 15, TUNNEL_COLOUR);
-		lcdDrawChar(x-X_OFFSET + 1, y-Y_OFFSET, icon);
+		lcdDrawCharC(x-X_OFFSET + 1, y-Y_OFFSET, icon, &pb, &pf);
 		x++;
 		break;
 
@@ -105,7 +149,9 @@ void player::move(int dir){
 }
 
 void player::put(int row, int col, int dir){
-	lcdFillWindow(x-X_OFFSET, x-X_OFFSET+15, y-Y_OFFSET, y-Y_OFFSET+15, BACKGROUND_COLOUR);
+	if(row==-1) row=defRow;
+	if(col==-1) col=defCol;
+	lcdFillWindow(x-X_OFFSET, x-X_OFFSET+15, y-Y_OFFSET, y-Y_OFFSET+15, TUNNEL_COLOUR);
 	switch(dir)
 	{
 	case 0:
@@ -125,7 +171,7 @@ void player::put(int row, int col, int dir){
 	}
 	x=row*16+8;
 	y=col*16+8;
-	lcdDrawChar(x-X_OFFSET, y-Y_OFFSET, icon);
+	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, &pb, &pf);
 	lastDir=dir;
 }	
 
