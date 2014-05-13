@@ -6,6 +6,7 @@
 #define BACKGROUND_COLOUR	14, 22, 48
 #define FOREGROUND_COLOUR	52, 54, 61
 #define	TUNNEL_COLOUR		0, 0, 0
+#define BONUS_COLOUR		60, 5, 5
 extern "C" {
 #ifndef _LCD_H
 #define _LCD_H
@@ -26,10 +27,12 @@ public:
 	unsigned int getInfo(int row, int col);
 	void putInfo(int row, int col, unsigned char info);
 	void putRectangle(int vs, int ve, int hs, int he, unsigned char info);
+	void putSpeedBonus(int row, int col);
 	int points;
 	void setup();
 private:
-	unsigned char terrain[15][5];
+//	unsigned char terrain[15][5];
+	unsigned char terrain[15][20];
 };
 
 
@@ -37,6 +40,8 @@ class player{
 public:
 	void go(int dir);
 	void put(int row, int col, int dir);
+	static struct colour pb;
+	static struct colour pf;
 protected:
 	void move(int dir);
 	int goodDir(int dir);
@@ -47,8 +52,6 @@ protected:
 	int defRow;
 	int defCol;
 	char icon;
-	static struct colour pb;
-	static struct colour pf;
 };
 
 class pacman : public player
@@ -69,9 +72,13 @@ public:
 	enemy(int row, int col, map *pp);
 	~enemy();
 	void go();
+	static void goAll();
+	static void respawnAll();
 protected:
 	static enemy * list[5];
+	static int blinks;
 };
 void pacmanGame();
 int rand();
 void drawPoint(int row, int col);
+void drawSpeedBonus(int row, int col);

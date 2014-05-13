@@ -21,7 +21,7 @@ void keyboardInit()
 	for (x = 5; x <= 8; x++) {
 		setGpioFunct(pinToGpio[x], GPINPUT);
 		setPull(pinToGpio[x], GPDOWN);
-		setDetect(pinToGpio[x], GPENABLE, GPHIGH);
+		setDetect(pinToGpio[x], GPENABLE, GPRISE);
 	}
 	/*
 	 * turn 1-4 lines high to allow interrupt

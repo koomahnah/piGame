@@ -31,7 +31,7 @@ enemy::enemy(int row, int col, map *pp){
 		}
 }
 enemy::~enemy(){
-	lcdFillWindow(x-X_OFFSET, x-X_OFFSET+15, y-Y_OFFSET, y-Y_OFFSET+15, TUNNEL_COLOUR);
+	//lcdFillWindow(x-X_OFFSET, x-X_OFFSET+15, y-Y_OFFSET, y-Y_OFFSET+15, TUNNEL_COLOUR);
 	for(int i=0;i<5;i++)
 		if(list[i]==this){
 			list[i]=0;
@@ -42,11 +42,10 @@ int pacman::go(int dir){
 	if(this->eaten==pMap->points) return 1;
 	if(this->collision()){
 		lifes--;
-		if(lifes==0){
+		if(lifes==-1){
 			return 2;
 		}
 		else{
-			lifes--;
 			return 3;
 		}
 	}
@@ -59,20 +58,27 @@ int pacman::go(int dir){
 			this->move(lastDir);
 		return 0;
 	}
-
+	int speedBonus = 0;
 	int row = x/16;
 	int col = y/16;
-	if(pMap->getInfo(row, col) == 2){
+	int tmp = pMap->getInfo(row,col);	
+	if(tmp == 6){
+		speedBonus = 1;
+		pMap->putInfo(row, col, 1);
+		eaten++;
+	}
+	else if(tmp == 2){
 		eaten++;
 		pMap->putInfo(row,col, 1);
 	}
 	if(goodDir(dir)){
 		this->lastDir = dir;
 		this->move(dir);
-	} else if(goodDir(lastDir)){
+	} else if(goodDir(lastDir))
 		this->move(lastDir);
-	} else return 0;
-	return 0;
+	
+	if(speedBonus) return 4;
+	else return 0;
 }
 
 int pacman::collision(){
@@ -217,7 +223,10 @@ void enemy::go(){
 			return;
 			break;
 		}
-		if(pMap->getInfo(row,col)==2)
+		int tmp = pMap->getInfo(row,col);
+		if(tmp==6)
+			drawSpeedBonus(row,col);
+		else if(tmp==2)
 			drawPoint(row,col);
 		this->move(lastDir);
 		return;
@@ -238,20 +247,36 @@ void enemy::go(){
 	}
 }
 
+void enemy::goAll(){
+	for(int i=0;i<5;i++)
+		if(enemy::list[i]!=0)
+			(enemy::list[i])->go();
+}
+
+void enemy::respawnAll(){
+	for(int i=0;i<5;i++)
+		if(enemy::list[i]!=0)
+			(enemy::list[i])->put(-1,-1,0);
+}
+
 map::map(){
-	for(int i=0;i<75;i++) terrain[i/5][i%5] = 0;
+	for(int i=0;i<300;i++) terrain[i/20][i%20]=0;
+//	for(int i=0;i<75;i++) terrain[i/5][i%5] = 0;
 	points = 0;
 }
 
 unsigned int map::getInfo(int row, int col){
-	return (unsigned int)(terrain[row][col/4] & (3<<((col%4)*2)))>>((col%4)*2);	
+	return (unsigned int)terrain[row][col];
+//	return (unsigned int)(terrain[row][col/4] & (3<<((col%4)*2)))>>((col%4)*2);	
 }
 
 void map::putInfo(int row, int col, unsigned char info){
-	unsigned char tmp = terrain[row][col/4];
+/*	unsigned char tmp = terrain[row][col/4];
 	tmp&=(~(3<<((col%4)*2)));
 	tmp|=(info<<((col%4)*2));
 	terrain[row][col/4] = tmp;
+	*/
+	terrain[row][col]=info;
 }
 void map::putRectangle(int vs, int ve, int hs, int he, unsigned char info){
 	lcdFillWindow(vs*16,(ve*16)+16,hs*16,(hs*16)+16, TUNNEL_COLOUR);
@@ -273,10 +298,17 @@ void map::putRectangle(int vs, int ve, int hs, int he, unsigned char info){
 	}
 }
 
+void map::putSpeedBonus(int row, int col){
+	this->putInfo(row,col,6);
+	drawSpeedBonus(row,col);
+}
+
 void map::setup(){
 	points = 0;
-	for(int i=0;i<300;i++)
-		if(this->getInfo(i%15,i/15)==2) points++;
+	for(int i=0;i<300;i++){
+		int tmp = this->getInfo(i%15,i/15);
+		if(tmp==2 | tmp==6) points++;
+	}
 }
 /* value returned between 0 and 45	*/
 int rand(){
@@ -294,4 +326,9 @@ void drawPoint(int row, int col){
 	int x = row*16+8;
 	int y = col*16+8;
 	lcdFillWindow(x-1,x,y-1,y,FOREGROUND_COLOUR);
+}
+void drawSpeedBonus(int row, int col){
+	int x = row*16+8;
+	int y = col*16+8;
+	lcdFillWindow(x-1,x,y-1,y,BONUS_COLOUR);
 }
