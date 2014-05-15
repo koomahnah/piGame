@@ -3,7 +3,7 @@
 #define FOREGROUND_COLOUR	10,56,19
 #define	TUNNEL_COLOUR		0, 0, 0
 */
-#define BACKGROUND_COLOUR	14, 22, 48
+#define BACKGROUND_COLOUR	12, 17, 38
 #define FOREGROUND_COLOUR	52, 54, 61
 #define	TUNNEL_COLOUR		0, 0, 0
 #define BONUS_COLOUR		60, 5, 5
@@ -22,6 +22,7 @@ extern "C" {
 
 #define X_OFFSET	8
 #define	Y_OFFSET	8
+class enemy;
 class map{
 public:
 	map();
@@ -29,6 +30,7 @@ public:
 	void putInfo(int row, int col, unsigned char info);
 	void putRectangle(int vs, int ve, int hs, int he, unsigned char info);
 	void putSpeedBonus(int row, int col);
+	void redraw();
 	int points;
 	void setup();
 private:
@@ -60,8 +62,10 @@ class pacman : public player
 public:
 	pacman(int row, int col, map *pp);
 	int go(int dir);
-	int lifes;
+	static int score;
+	static int lifes;
 	int eaten;
+	enemy * collided; 
 protected:
 	static struct colour pacb;
 	static struct colour pacf;
@@ -78,6 +82,7 @@ public:
 	static void goAll();
 	static void respawnAll();
 	static void blink(int b);
+	int freeze;
 protected:
 	static enemy * list[5];
 	static int blinks;

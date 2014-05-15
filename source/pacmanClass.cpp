@@ -5,12 +5,13 @@ struct colour enemy::ef = { FOREGROUND_COLOUR };
 struct colour pacman::pacb = { TUNNEL_COLOUR };
 struct colour pacman::pacf = { PACMAN_COLOUR };
 int enemy::blinks = 0;
+int pacman::score = 0;
+int pacman::lifes = 0;
 pacman::pacman(int row, int col, map *pp){
 	x=row*16+8;
 	y=col*16+8;
 	lastDir = 0;
 	pMap=pp;
-	lifes = 3;
 	eaten = 0;
 	icon = 'V';
 	defRow = row;
@@ -30,6 +31,7 @@ enemy::enemy(int row, int col, map *pp){
 	defCol = col;
 	pb = &eb;
 	pf = &ef;
+	freeze = 0;
 	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, pb, pf);
 	for(int i=0;i<5;i++)
 		if(list[i]==0){
@@ -48,8 +50,9 @@ enemy::~enemy(){
 int pacman::go(int dir){
 	if(this->eaten==pMap->points) return 1;
 	if(this->collision()){
-		lifes--;
-		if(lifes==-1){
+		if(enemy::blinks>0) return 5;
+		pacman::lifes--;
+		if(pacman::lifes==-1){
 			return 2;
 		}
 		else{
@@ -72,9 +75,11 @@ int pacman::go(int dir){
 	if(tmp == 6){
 		speedBonus = 1;
 		pMap->putInfo(row, col, 1);
+		score+=10;
 		eaten++;
 	}
 	else if(tmp == 2){
+		score++;
 		eaten++;
 		pMap->putInfo(row,col, 1);
 	}
@@ -90,11 +95,15 @@ int pacman::go(int dir){
 int pacman::collision(){
 	for(int i=0;i<5;i++){
 		if(enemy::list[i]!=0){
+			if((enemy::list[i])->freeze>0) continue;
 			int xe=(enemy::list[i])->x;
 			int ye=(enemy::list[i])->y;
 			int sqDist = (this->x-xe)*(this->x-xe);
 			sqDist+= (this->y-ye)*(this->y-ye);
-			if(sqDist<=256) return 1;
+			if(sqDist<=150){
+				this->collided=enemy::list[i];
+				return 1;
+			}
 		}
 	}
 	return 0;
@@ -188,6 +197,11 @@ void player::put(int row, int col, int dir){
 }	
 
 void enemy::go(){
+	if(this->freeze>0){
+		this->freeze--;
+		lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET + 1, icon, pb, pf);
+		return;
+	}
 	int row, col;
 	int xm = x%16;
 	int ym = y%16;
@@ -328,6 +342,14 @@ void map::setup(){
 		if(tmp==2 | tmp==6) points++;
 	}
 }
+void map::redraw(){
+	int tmp;
+	for(int i=0;i<300;i++){
+		tmp = this->getInfo(i%15,i/15);
+		if(tmp==2) drawPoint(i%15,i/15);
+		else if(tmp==6) drawSpeedBonus(i%15,i/15);
+	}
+}	
 /* value returned between 0 and 45	*/
 int rand(){
 	unsigned int *c = (unsigned int*) 0x20003004; // timer CLO
