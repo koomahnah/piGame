@@ -1,7 +1,10 @@
 #include "pacman.h"
 enemy *enemy::list[] = {0, 0, 0, 0, 0};
-struct colour player::pb = { TUNNEL_COLOUR };
-struct colour player::pf = { FOREGROUND_COLOUR }; 
+struct colour enemy::eb = { TUNNEL_COLOUR };
+struct colour enemy::ef = { FOREGROUND_COLOUR }; 
+struct colour pacman::pacb = { TUNNEL_COLOUR };
+struct colour pacman::pacf = { PACMAN_COLOUR };
+int enemy::blinks = 0;
 pacman::pacman(int row, int col, map *pp){
 	x=row*16+8;
 	y=col*16+8;
@@ -12,7 +15,9 @@ pacman::pacman(int row, int col, map *pp){
 	icon = 'V';
 	defRow = row;
 	defCol = col;
-	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, &pb, &pf);
+	pb = &pacb;
+	pf = &pacf;
+	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, pb, pf);
 }
 
 enemy::enemy(int row, int col, map *pp){
@@ -23,7 +28,9 @@ enemy::enemy(int row, int col, map *pp){
 	icon = 'O';
 	defRow = row;
 	defCol = col;
-	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, &pb, &pf);
+	pb = &eb;
+	pf = &ef;
+	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, pb, pf);
 	for(int i=0;i<5;i++)
 		if(list[i]==0){
 			list[i]=this;
@@ -76,7 +83,6 @@ int pacman::go(int dir){
 		this->move(dir);
 	} else if(goodDir(lastDir))
 		this->move(lastDir);
-	
 	if(speedBonus) return 4;
 	else return 0;
 }
@@ -126,25 +132,25 @@ void player::move(int dir){
 	case 0:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (2 << 3));
 		lcdFillWindow(x-X_OFFSET, x-X_OFFSET + 15, y-Y_OFFSET, y-Y_OFFSET, TUNNEL_COLOUR);
-		lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET + 1, icon, &pb, &pf);
+		lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET + 1, icon, pb, pf);
 		y++;
 		break;
 	case 1:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (7 << 3));
 		lcdFillWindow(x-X_OFFSET + 15, x-X_OFFSET + 15, y-Y_OFFSET, y-Y_OFFSET + 15, TUNNEL_COLOUR);
-		lcdDrawCharC(x-X_OFFSET - 1, y-Y_OFFSET, icon, &pb, &pf);
+		lcdDrawCharC(x-X_OFFSET - 1, y-Y_OFFSET, icon, pb, pf);
 		x--;
 		break;
 	case 2:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (6 << 3));
 		lcdFillWindow(x-X_OFFSET, x-X_OFFSET + 15, y-Y_OFFSET + 15, y-Y_OFFSET + 15, TUNNEL_COLOUR);
-		lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET - 1, icon, &pb, &pf);
+		lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET - 1, icon, pb, pf);
 		y--;
 		break;
 	case 3:
 		lcdRegWrite(0x03, (1 << 15) | (1 << 14) | (1 << 12) | (5 << 3));
 		lcdFillWindow(x-X_OFFSET, x-X_OFFSET, y-Y_OFFSET, y-Y_OFFSET + 15, TUNNEL_COLOUR);
-		lcdDrawCharC(x-X_OFFSET + 1, y-Y_OFFSET, icon, &pb, &pf);
+		lcdDrawCharC(x-X_OFFSET + 1, y-Y_OFFSET, icon, pb, pf);
 		x++;
 		break;
 
@@ -177,7 +183,7 @@ void player::put(int row, int col, int dir){
 	}
 	x=row*16+8;
 	y=col*16+8;
-	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, &pb, &pf);
+	lcdDrawCharC(x-X_OFFSET, y-Y_OFFSET, icon, pb, pf);
 	lastDir=dir;
 }	
 
@@ -247,10 +253,22 @@ void enemy::go(){
 	}
 }
 
+void enemy::blink(int b){
+	enemy::blinks = b;
+}
 void enemy::goAll(){
-	for(int i=0;i<5;i++)
-		if(enemy::list[i]!=0)
+	struct colour black = { 0, 0, 0 };
+	if(enemy::blinks>0)
+		enemy::blinks--;
+	for(int i=0;i<5;i++){
+		if(enemy::list[i]!=0 && (enemy::blinks%8)==4){
+			(enemy::list[i])->pf = &black;
 			(enemy::list[i])->go();
+			(enemy::list[i])->pf = &enemy::ef;
+		}
+		else if(enemy::list[i]!=0 && (enemy::blinks%4)==0)
+			(enemy::list[i])->go();
+	}
 }
 
 void enemy::respawnAll(){

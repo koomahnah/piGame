@@ -9,6 +9,7 @@ short int pinToGpio[9] = { 12, 22, 23, 24, 14, 15, 17, 18, 27 };
 char keyboardArray[16] = { '1', '2', '3', 'A', '4', '5', '6', 'B', '7', '8', '9', 'C', 42, '0', 35, 'D' };
 
 void (*extKIrqHandler)(void) = 0;
+
 void keyboardInit()
 {
 	extKIrqHandler = 0;

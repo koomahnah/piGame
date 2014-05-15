@@ -20,8 +20,8 @@
 
 struct colour{
         unsigned char red;
-        unsigned char blue;
         unsigned char green;
+        unsigned char blue;
 };
 
 extern struct colour background;

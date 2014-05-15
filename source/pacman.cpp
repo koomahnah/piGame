@@ -21,8 +21,19 @@ int keyToDir(int key){
 		break;
 	}
 }
-
 int level1(){
+	lcdFillWindow(0,239,0,319, BACKGROUND_COLOUR);
+	map m;
+	m.putRectangle(2,12,1,6,2);
+	m.putRectangle(2,12,6,11,2);
+	m.putSpeedBonus(2,6);
+	m.setup();
+	enemy one(2,1,&m);
+	pacman four(2,11,&m);
+	wait(2000000);
+	return mainLoop(&four, "GREAT", "LEVEL 2", "PITIABLE", "TRY AGAIN");
+}
+int level2(){
 	lcdFillWindow(0,239,0,319, BACKGROUND_COLOUR);
 	map m;
 	m.putRectangle(1,10,0,10,2);
@@ -36,28 +47,51 @@ int level1(){
 	m.setup();
 	enemy one(1,0,&m);
 	enemy two(2,0,&m);
-	enemy three(3,0,&m);
 	pacman four(1,8,&m);
 	wait(2000000);
-	return mainLoop(&four, "GREAT", "LEVEL 2", "PITIABLE", "TRY AGAIN");
+	return mainLoop(&four, "GREAT", "LEVEL 3", "PITIABLE", "TRY AGAIN");
 }
-
+int level3(){
+	lcdFillWindow(0,239,0,319, BACKGROUND_COLOUR);
+	map m;
+	m.putRectangle(0,4,0,4,2);
+	m.putRectangle(4,8,0,4,2);
+	m.putRectangle(8,12,0,7,2);
+	m.putRectangle(0,6,4,7,2);
+	m.putRectangle(0,8,7,12,2);
+	m.putRectangle(8,12,7,12,2);
+	m.putRectangle(0,4,12,16,2);
+	m.putRectangle(4,8,12,16,2);
+	m.putRectangle(8,12,12,16,2);
+	m.putRectangle(4,6,12,16,2);
+	m.putSpeedBonus(4,14);
+	m.putSpeedBonus(0,0);
+	m.setup();
+	enemy one(1,0,&m);
+	enemy two(2,0,&m);
+	enemy three(3,0,&m);
+	pacman five(8,12,&m);
+	wait(2000000);
+	return mainLoop(&five, "NOW WE WILL SEE", "LEVEL 4  ", "SEHR SCHLECHT", "TRY AGAIN  ");
+}
+int level4(){
+	lcdFillWindow(0,239,0,319,BACKGROUND_COLOUR);
+	map m;
+	m.putRectangle(1,6,1,6,2);
+	m.putRectangle(8,13,10,15,2);
+	m.putSpeedBonus(13,15);
+	m.setup();
+	enemy one(1,1,&m);
+	pacman two(8,10,&m);
+	wait(2000000);
+	return mainLoop(&two, " ", " ", " ", " ");
+}
 int mainLoop(pacman *p, const char *win1, const char *win2, const char *fail1, const char *fail2){
 	int b=0;
 	char tmp[10];
-	int i = 0;
-	struct colour pfOld;
+	struct colour black = {0, 0, 0};
 	while(1){
-		if(i>0) i--;
-		if((i%4)==0){
-			if((i%8)==4){
-				pfOld=player::pf;
-				player::pf = { 0, 0, 0 };
-				enemy::goAll();
-				player::pf = pfOld;
-			}
-			else enemy::goAll();
-		}
+		enemy::goAll();
 		switch (p->go(keyToDir(kBuffer))){
 		case 1:
 			lcdFillWindow(0,239,0,319, BACKGROUND_COLOUR);
@@ -79,11 +113,10 @@ int mainLoop(pacman *p, const char *win1, const char *win2, const char *fail1, c
 			wait(1000000);
 			p->put(-1, -1, 0);
 			enemy::respawnAll();
-			i = 0;
 			wait(1000000);
 			break;
 		case 4:
-			i=400;
+			enemy::blink(300);
 			break;
 		default:
 			break;
@@ -110,5 +143,8 @@ void pacmanGame(){
 	lcdPrint(112, 80, "LEVEL 1");
 	wait(1000000);
 	while(level1());
+	while(level2());
+	while(level3());
+	while(level4());
 }
 

@@ -7,6 +7,7 @@
 #define FOREGROUND_COLOUR	52, 54, 61
 #define	TUNNEL_COLOUR		0, 0, 0
 #define BONUS_COLOUR		60, 5, 5
+#define PACMAN_COLOUR		53,63,0
 extern "C" {
 #ifndef _LCD_H
 #define _LCD_H
@@ -40,8 +41,8 @@ class player{
 public:
 	void go(int dir);
 	void put(int row, int col, int dir);
-	static struct colour pb;
-	static struct colour pf;
+	struct colour *pb;
+	struct colour *pf;
 protected:
 	void move(int dir);
 	int goodDir(int dir);
@@ -62,6 +63,8 @@ public:
 	int lifes;
 	int eaten;
 protected:
+	static struct colour pacb;
+	static struct colour pacf;
 	int collision();
 };
 
@@ -74,9 +77,12 @@ public:
 	void go();
 	static void goAll();
 	static void respawnAll();
+	static void blink(int b);
 protected:
 	static enemy * list[5];
 	static int blinks;
+	static struct colour eb;
+	static struct colour ef;
 };
 void pacmanGame();
 int rand();

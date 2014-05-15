@@ -27,7 +27,19 @@ void timerSetMatch(unsigned int value)
 	timerMatch = value;
 }
 
-void timerOneShot(unsigned int value, 
+void timerOneShot(unsigned int value, void (*pFunct)(void)){
+	unsigned int tmp = *(timercs+1);
+	tmp+=value;
+	*(timercs+4)=tmp;
+	*timercs = 0b10;
+	__timerPFunct = pFunct;
+	tIrqHandler = tOneShotHandler;
+}
+void tOneShotHandler(void){
+	if(__timerPFunct!=0) __timerPFunct();
+	tIrqHandler=tCircHandler;
+	__timerPFunct = 0;
+}
 void tCircHandler(void){
 	unsigned int tmp = *(timercs+1);
 	tmp+=timerMatch;
