@@ -27,15 +27,27 @@
 
 #define	LONG_INTERVAL	1500000
 #define	SHORT_INTERVAL	250000
-
+/*
 void setGpioFunct(int, int);
 void setPull(int pinNumber, int pull);
 void flashValue(int value, char length);
 void wait(unsigned int interval); //us = 10^(-6) s
 void pushCounter(unsigned int interval);
 int pollCounter();
+*/
+extern int setGpioFunct(int pinNumber, int desFunction);
+extern int clearPin(int pinNumber);
+extern int setPin(int pinNumber);
+extern void wait(unsigned int interval); //us = 10^(-6) s
+extern void flash(void);
+extern int getPinLevel(int pinNumber);
+extern int setPull(int pinNumber, int pull);
+extern int getEventDetSt(int pinNumber);
+extern int setDetect(int pinNumber, int enable, int event);
+extern void waitCycles(int cyclesAmount);
+extern void flashTime(int interval);
 
-extern volatile unsigned int* gpioBase;
+/*extern volatile unsigned int* gpioBase;
 extern volatile unsigned int* gpset0;
 extern volatile unsigned int* gpclear0;
 extern volatile unsigned int* gppud;
@@ -52,7 +64,7 @@ static inline void clearPin(int pinNumber){
 
 /*	enable is bool value,
 	as for detect mode use: RISE, FALL, HIGH, LOW, ARISE, AFALL
-*/
+*//*
 static inline void setDetect(int pinNumber, short int enable, short int mode){
 	unsigned int tmp = *(gpren0+(mode*3)+(pinNumber/32));
 	tmp |= enable<<(pinNumber%32);
@@ -75,4 +87,5 @@ static inline void flashTime(unsigned int time){
 
 
 
+*/
 
