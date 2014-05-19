@@ -17,7 +17,7 @@ int keyToDir(int key){
 		return 0;
 		break;
 	default:
-		return 0;
+		return 9;
 		break;
 	}
 }
@@ -79,7 +79,7 @@ int level3(){
 	enemy three(7,16,&m);
 	pacman five(7,0,&m);
 	wait(2000000);
-	return mainLoop(&five, &m, "NOW WE WILL SEE", "LEVEL 4", "SEHR SCHLECHT", "TRY AGAIN  ");
+	return mainLoop(&five, &m, "SEHR GUT", "LEVEL 4", "SEHR SCHLECHT", "TRY AGAIN  ");
 }
 int level4()
 {
@@ -114,7 +114,7 @@ int level4()
 	enemy four(4,12,&m);
 	pacman five(1,1,&m);
 	wait(2000000);
-	return mainLoop(&five, &m, "NOW WE WILL SEE", "LEVEL 4", "SEHR SCHLECHT", "TRY AGAIN  ");
+	return mainLoop(&five, &m, "EVEN BETTER", "LEVEL 4", "SEHR SCHLECHT", "TRY AGAIN  ");
 }
 int mainLoop(pacman *p, map *m, const char *win1, const char *win2, const char *fail1, const char *fail2){
 	int b=0;
@@ -169,9 +169,9 @@ int mainLoop(pacman *p, map *m, const char *win1, const char *win2, const char *
 		lcdSetBackgroundColour(BACKGROUND_COLOUR);
 		intToStr(p->score, tmp);
 		lcdPrint(0,112, tmp);
-		if(b==0) wait(7500);
-		if(kBuffer==3) b = 1;
-		else if(kBuffer==7) pacman::lifes=9;
+		wait(7500);
+		while(kBuffer==3) wait(1000);
+		if(kBuffer==7) pacman::lifes=9;
 	}
 }
 
