@@ -17,6 +17,7 @@
 #define WIDTH   	16	//24
 #define OFFSET  	4
 #define FONT_NAME	Sinclair_Inverted_M
+#define FONT_SIZE	3044
 
 struct colour{
         unsigned char red;
@@ -39,7 +40,7 @@ extern volatile int intrTrace;
 	work, all procedure will be repeated.
 */
 
-extern unsigned char Sinclair_Inverted_M[3044];
+extern unsigned char FONT_NAME[FONT_SIZE];
 
 void lcdInit(int);
 void lcdRegWrite(unsigned char, unsigned short int);
