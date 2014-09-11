@@ -8,7 +8,7 @@
 # The toolchain to use. arm-none-eabi works, but there does exist 
 # arm-bcm2708-linux-gnueabi.
 #ARMGNU ?= arm-linux-gnueabi
-ARMGNU ?= arm-linux-gnueabi
+ARMGNU ?= arm-linux-gnueabihf
 # The intermediate directory for compiled object files.
 BUILD = build/
 
@@ -57,10 +57,10 @@ $(BUILD)%.o: $(SOURCE)%.s
 	$(ARMGNU)-as -I $(SOURCE) $< -o $@
 
 $(BUILD)%.o: $(SOURCE)%.c
-	$(ARMGNU)-gcc-4.7 -fno-exceptions -O2 $< -c -o $@
+	$(ARMGNU)-gcc -fno-exceptions -O2 $< -c -o $@
 
 $(BUILD)%.o: $(SOURCE)%.cpp
-	$(ARMGNU)-g++-4.7 -fno-stack-protector -fno-exceptions -O2 $< -c -o $@
+	$(ARMGNU)-g++ -fno-stack-protector -fno-exceptions -O2 $< -c -o $@
 # -fno-stack-protector 
 # Rule to clean files.
 clean : 
