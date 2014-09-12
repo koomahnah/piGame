@@ -16,7 +16,7 @@ map::map()
 //      for(int i=0;i<75;i++) terrain[i/5][i%5] = 0;
 	points = 0;
 }
-
+/*
 unsigned int map::getInfo(int row, int col)
 {
 	return (unsigned int) terrain[row][col];
@@ -29,9 +29,9 @@ void map::putInfo(int row, int col, unsigned char info)
 	tmp&=(~(3<<((col%4)*2)));
 	tmp|=(info<<((col%4)*2));
 	terrain[row][col/4] = tmp;
-	*/
+	*//*
 	terrain[row][col] = info;
-}
+}*/
 
 void map::putRectangle(int vs, int ve, int hs, int he, unsigned char info)
 {
@@ -45,14 +45,14 @@ void map::putRectangle(int vs, int ve, int hs, int he, unsigned char info)
 		      TUNNEL_COLOUR);
 
 	for (int i = 0; i <= (he - hs); i++) {
-		this->putInfo(vs, i + hs, info);
-		this->putInfo(ve, i + hs, info);
+		this->terrain[vs][i + hs] = info;
+		this->terrain[ve][i + hs] = info;
 		drawPoint(vs, i + hs);
 		drawPoint(ve, i + hs);
 	}
 	for (int i = 0; i <= (ve - vs); i++) {
-		this->putInfo(i + vs, hs, info);
-		this->putInfo(i + vs, he, info);
+		this->terrain[i + vs][hs] = info;
+		this->terrain[i + vs][he] = info;
 		drawPoint(i + vs, hs);
 		drawPoint(i + vs, he);
 	}
@@ -60,7 +60,7 @@ void map::putRectangle(int vs, int ve, int hs, int he, unsigned char info)
 
 void map::putSpeedBonus(int row, int col)
 {
-	this->putInfo(row, col, 6);
+	this->terrain[row][col] = 6;
 	drawSpeedBonus(row, col);
 }
 
@@ -68,7 +68,7 @@ void map::redraw()
 {
 	int tmp;
 	for (int i = 0; i < 300; i++) {
-		tmp = this->getInfo(i % 15, i / 15);
+		tmp = this->terrain[i % 15][i / 15];
 		if (tmp == 2)
 			drawPoint(i % 15, i / 15);
 		else if (tmp == 6)
@@ -80,7 +80,7 @@ void map::setup()
 {
 	points = 0;
 	for (int i = 0; i < 300; i++) {
-		int tmp = this->getInfo(i % 15, i / 15);
+		int tmp = this->terrain[i % 15][i / 15];
 		if (tmp == 2 | tmp == 6)
 			points++;
 	}
@@ -94,25 +94,25 @@ int player::goodDir(int dir)
 	case 0:
 		if (col == 19)
 			return 0;
-		if (pMap->getInfo(row, col + 1) == 0)
+		if (pMap->terrain[row][col + 1] == 0)
 			return 0;
 		break;
 	case 1:
 		if (row == 0)
 			return 0;
-		if (pMap->getInfo(row - 1, col) == 0)
+		if (pMap->terrain[row - 1][col] == 0)
 			return 0;
 		break;
 	case 2:
 		if (col == 0)
 			return 0;
-		if (pMap->getInfo(row, col - 1) == 0)
+		if (pMap->terrain[row][col - 1] == 0)
 			return 0;
 		break;
 	case 3:
 		if (row == 14)
 			return 0;
-		if (pMap->getInfo(row + 1, col) == 0)
+		if (pMap->terrain[row + 1][col] == 0)
 			return 0;
 		break;
 	default:
@@ -240,16 +240,16 @@ int pacman::go(int dir)
 	int speedBonus = 0;
 	int row = x / 16;
 	int col = y / 16;
-	int tmp = pMap->getInfo(row, col);
+	int tmp = pMap->terrain[row][col];
 	if (tmp == 6) {
 		speedBonus = 1;
-		pMap->putInfo(row, col, 1);
+		pMap->terrain[row][col] = 1;
 		score += 10;
 		eaten++;
 	} else if (tmp == 2) {
 		score++;
 		eaten++;
-		pMap->putInfo(row, col, 1);
+		pMap->terrain[row][col] = 1;
 	}
 	if (goodDir(dir)) {
 		this->lastDir = dir;
@@ -359,7 +359,7 @@ void enemy::go()
 			return;
 			break;
 		}
-		int tmp = pMap->getInfo(row, col);
+		int tmp = pMap->terrain[row][col];
 		if (tmp == 6)
 			drawSpeedBonus(row, col);
 		else if (tmp == 2)

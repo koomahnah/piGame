@@ -20,8 +20,8 @@ class enemy;
 class map {
       public:
 	map();
-	unsigned int getInfo(int row, int col);
-	void putInfo(int row, int col, unsigned char info);
+//	unsigned int getInfo(int row, int col);
+//	void putInfo(int row, int col, unsigned char info);
 	void putRectangle(int vs, int ve, int hs, int he,
 			  unsigned char info);
 	void putSpeedBonus(int row, int col);
