@@ -8,7 +8,7 @@
 # The toolchain to use. arm-none-eabi works, but there does exist 
 # arm-bcm2708-linux-gnueabi.
 #ARMGNU ?= arm-linux-gnueabi
-ARMGNU ?= arm-linux-gnueabihf
+ARMGNU ?= arm-none-eabi
 # The intermediate directory for compiled object files.
 BUILD = build/
 
@@ -49,8 +49,8 @@ $(TARGET) : $(BUILD)output.elf
 
 # Rule to make the elf file.
 $(BUILD)output.elf : $(OBJECTS) $(LINKER)
-#	$(ARMGNU)-g++-4.7 -finline-functions -nostartfiles -e 0x8000 $(OBJECTS) -o $(BUILD)output.elf
-	$(ARMGNU)-ld -e 0x8000 -static --no-undefined $(OBJECTS) -Map $(MAP) -o $(BUILD)output.elf -T $(LINKER) 
+	$(ARMGNU)-g++ -finline-functions -nostartfiles -e 0x8000 $(OBJECTS) -o $(BUILD)output.elf -T $(LINKER)
+#	$(ARMGNU)-ld -e 0x8000 -static --no-undefined $(OBJECTS) -Map $(MAP) -o $(BUILD)output.elf -T $(LINKER) 
 
 # Rule to make the object files.
 $(BUILD)%.o: $(SOURCE)%.s

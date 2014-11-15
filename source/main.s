@@ -1,5 +1,5 @@
 .extern entry
-//.extern __stack_chk_guard_setup
+@.extern __stack_chk_guard_setup
 .section .init
 .globl _start
 _start:
@@ -50,7 +50,6 @@ loop:
 	cmp r0, r1
 	strlo r2, [r0], $4
 	blo loop
-
 @	b main
 @	bl __stack_chk_guard_setup
 	bl entry
@@ -77,7 +76,7 @@ keyboard:
 	bl kIrqHandler
 	pop {r0-r12, lr}
 	subs pc, lr, $4
-/*.globl main
-main:
-mainLoop:
-	b mainLoop*/
+@/*.globl main
+@main:
+@mainLoop:
+@	b mainLoop*/
